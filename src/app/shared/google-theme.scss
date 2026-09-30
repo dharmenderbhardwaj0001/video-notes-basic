@@ -1,0 +1,554 @@
+// Google Apps Theme
+// Colors matching Google's Material Design
+
+$google-blue: #1a73e8;
+$google-red: #d93025;
+$google-yellow: #fbbc05;
+$google-green: #188038;
+$google-grey: #f1f3f4;
+$google-dark-grey: #5f6368;
+$google-light-grey: #e0e0e0;
+$google-white: #ffffff;
+$google-text: #202124;
+$google-text-secondary: #5f6368;
+$google-border: #dadce0;
+$google-hover: rgba(0, 0, 0, 0.04);
+$google-active: rgba(0, 0, 0, 0.1);
+
+// Google Font
+$google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
+
+// Google apps header style
+.google-header {
+  background-color: $google-white;
+  border-bottom: 1px solid $google-border;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo {
+    font-size: 22px;
+    font-weight: 500;
+    color: $google-text;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(45deg, $google-blue, $google-red, $google-yellow, $google-green);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+  }
+
+  .app-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: $google-text;
+    margin: 0;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $google-hover;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: $google-blue;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+    }
+  }
+}
+
+// Main container
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+// Google cards
+.google-card {
+  background-color: $google-white;
+  border-radius: 8px;
+  border: 1px solid $google-border;
+  padding: 24px;
+  margin: 16px 0;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1), 0 2px 4px 0 rgba(60, 64, 67, 0.05);
+
+  .card-header {
+    font-size: 20px;
+    font-weight: 500;
+    color: $google-text;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid $google-light-grey;
+  }
+
+  .card-content {
+    padding: 16px 0;
+  }
+}
+
+// Google buttons
+.google-btn {
+  background-color: $google-blue;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  margin: 4px;
+
+  &:hover {
+    background-color: darken($google-blue, 5%);
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  }
+
+  &:active {
+    background-color: darken($google-blue, 10%);
+  }
+
+  &-secondary {
+    background-color: $google-white;
+    color: $google-blue;
+    border: 1px solid $google-blue;
+
+    &:hover {
+      background-color: rgba($google-blue, 0.04);
+    }
+  }
+
+  &-text {
+    background-color: transparent;
+    color: $google-blue;
+    border: none;
+    padding: 8px 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &-icon {
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+  }
+
+  &-danger {
+    background-color: $google-red;
+    color: white;
+
+    &:hover {
+      background-color: darken($google-red, 5%);
+    }
+  }
+}
+
+// Google form elements
+.google-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid $google-border;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: $google-font;
+  color: $google-text;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $google-blue;
+    box-shadow: 0 0 0 2px rgba($google-blue, 0.2);
+  }
+
+  &::placeholder {
+    color: $google-text-secondary;
+  }
+
+  &-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  &-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: $google-text-secondary;
+    margin-bottom: 6px;
+  }
+}
+
+// Google navigation
+.google-nav {
+  background-color: $google-white;
+  padding: 16px 0;
+  border-bottom: 1px solid $google-border;
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-item {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: $google-text-secondary;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: $google-hover;
+      color: $google-text;
+    }
+
+    &-active {
+      background-color: $google-blue;
+      color: white;
+
+      &:hover {
+        background-color: darken($google-blue, 5%);
+      }
+    }
+
+    &-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Google list items
+.google-list {
+  .list-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid $google-light-grey;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $google-hover;
+    }
+
+    .item-content {
+      flex: 1;
+      padding: 8px;
+    }
+
+    .item-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: $google-text;
+    }
+
+    .item-subtitle {
+      font-size: 12px;
+      color: $google-text-secondary;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .item-icon {
+      width: 24px;
+      height: 24px;
+      color: $google-text-secondary;
+    }
+  }
+
+  .list-empty {
+    text-align: center;
+    padding: 32px;
+    color: $google-text-secondary;
+    font-size: 14px;
+  }
+}
+
+// Google grid
+.google-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+
+  .grid-item {
+    background-color: $google-white;
+    border: 1px solid $google-border;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+
+    &:hover {
+      border-color: $google-blue;
+      box-shadow: 0 1px 2px 0 rgba($google-blue, 0.1);
+    }
+
+    .grid-icon {
+      font-size: 48px;
+      color: $google-blue;
+      margin-bottom: 8px;
+    }
+
+    .grid-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: $google-text;
+    }
+
+    .grid-subtitle {
+      font-size: 12px;
+      color: $google-text-secondary;
+    }
+  }
+}
+
+// Google dialog/modal
+.google-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .dialog-content {
+    background-color: $google-white;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.2), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    position: relative;
+
+    .dialog-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid $google-border;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .dialog-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: $google-text;
+        margin: 0;
+      }
+
+      .dialog-close {
+        background: none;
+        border: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $google-text-secondary;
+
+        &:hover {
+          background-color: $google-hover;
+          color: $google-text;
+        }
+      }
+    }
+
+    .dialog-body {
+      padding: 24px;
+    }
+
+    .dialog-actions {
+      padding: 16px 24px;
+      border-top: 1px solid $google-border;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+  }
+}
+
+// Google notifications
+.google-notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: $google-text;
+  color: $google-white;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  animation: slideIn 0.3s ease;
+
+  &-success {
+    background-color: $google-green;
+  }
+
+  &-error {
+    background-color: $google-red;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+// Google utilities
+.google-util {
+  .progress-bar {
+    height: 4px;
+    background-color: $google-light-grey;
+    border-radius: 2px;
+    overflow: hidden;
+
+    .progress-fill {
+      height: 100%;
+      background-color: $google-blue;
+      transition: width 0.3s ease;
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background-color: $google-light-grey;
+    margin: 16px 0;
+  }
+
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid $google-light-grey;
+      border-top-color: $google-blue;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .google-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header-left, .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .main-container {
+    padding: 16px;
+  }
+
+  .google-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .google-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .google-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .google-header {
+    padding: 12px 16px;
+  }
+
+  .nav-container {
+    padding: 0 16px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .nav-item {
+    white-space: nowrap;
+  }
+}
