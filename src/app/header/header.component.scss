@@ -1,0 +1,50 @@
+@use '../shared/google-theme' as *;
+
+:host {
+  display: block;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 8px;
+  padding: 4px 6px;
+  margin-left: -6px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: $google-hover;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    // Violet → purple → pink shades mix
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #d946ef 65%, #ec4899 100%);
+    box-shadow: 0 1px 3px rgba(124, 58, 237, 0.4);
+  }
+
+  .app-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: $google-text;
+    margin: 0;
+  }
+}
+
+.dialog-body {
+  .name-hint {
+    margin: 8px 0 0 0;
+    font-size: 12px;
+    color: $google-text-secondary;
+  }
+}

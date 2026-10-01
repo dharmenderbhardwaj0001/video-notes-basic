@@ -1,1 +1,67 @@
-<p>year works!</p>
+<div class="page-container">
+  <app-header></app-header>
+
+  <div class="page-content">
+    <div class="year-container">
+      <div class="breadcrumb">
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goHome()">Home</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span>{{ year }}</span>
+        </div>
+      </div>
+
+      <h2 class="page-title">Year {{ year }}</h2>
+      <p class="page-subtitle">Select a month to view days and videos</p>
+
+      <div class="months-grid">
+        <div 
+          *ngFor="let month of months"
+          class="month-card" 
+          [class.month-card-active]="hasDataForMonth(month)"
+          (click)="navigateToMonth(month)"
+        >
+          <div class="month-icon">
+            <span class="month-number">{{ month }}</span>
+          </div>
+          <div class="month-content">
+            <h3>{{ getMonthName(month) }}</h3>
+            <p>{{ getMonthStats(month) }}</p>
+          </div>
+          <div class="month-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="year-stats" *ngIf="yearStats">
+        <div class="stat-card">
+          <h4>Year Statistics</h4>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value">{{ yearStats.totalVideos }}</span>
+              <span class="stat-label">Total Videos</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ yearStats.totalNotes }}</span>
+              <span class="stat-label">Total Notes</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ yearStats.activeMonths }}</span>
+              <span class="stat-label">Active Months</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ yearStats.activeDays }}</span>
+              <span class="stat-label">Active Days</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,232 @@
-<p>video-detail works!</p>
+<div class="page-container">
+  <app-header actionLabel="Save Position" actionIcon="save" [onAction]="savePositionAction"></app-header>
+
+  <div class="page-content">
+    <div class="video-detail-container">
+      <div class="breadcrumb">
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goHome()">Home</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goToYear()">{{ year }}</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goToMonth()">{{ monthName }}</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goToDay()">{{ day }}<sup>{{ daySuffix }}</sup></span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span>{{ video?.videoTitle || 'Video' }}</span>
+        </div>
+      </div>
+
+      <div class="video-header">
+        <h2 class="page-title">{{ video?.videoTitle || 'Untitled Video' }}</h2>
+        <div class="video-meta">
+          <span class="meta-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v6h-2zm0 8h2v2h-2z" fill="currentColor"/>
+            </svg>
+            {{ formatDate(video?.timestamp) }}
+          </span>
+          <span class="meta-badge" *ngIf="video?.position">
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M8 5v14l11-7z" fill="currentColor"/>
+            </svg>
+            {{ formatPosition(video?.position) }} saved
+          </span>
+        </div>
+      </div>
+
+      <div class="video-content">
+        <!-- Video Player Section -->
+        <div class="video-player-section">
+          <div class="video-player">
+            <div class="player-placeholder" [ngStyle]="{'background-color': getRandomColor(video?.id || '')}">
+              <img class="player-thumb" [src]="getThumbnail()" [alt]="video?.videoTitle || 'Video thumbnail'" />
+              <div class="player-overlay">
+                <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 0 24 24" width="48">
+                  <path d="M8 5v14l11-7z" fill="currentColor"/>
+                </svg>
+                <p>Video Player</p>
+                <p class="player-url">{{ video?.videoUrl || 'No URL provided' }}</p>
+              </div>
+              <div class="player-controls" *ngIf="video?.videoUrl">
+                <button class="control-btn" (click)="playPause()">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M8 5v14l11-7z" fill="currentColor" *ngIf="!isPlaying"/>
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor" *ngIf="isPlaying"/>
+                  </svg>
+                </button>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="currentProgress"></div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    [max]="duration" 
+                    [(ngModel)]="currentPosition" 
+                    (input)="updatePosition($event)" 
+                    class="progress-slider"
+                  />
+                </div>
+                <span class="time-display">{{ formatPosition(currentPosition) }} / {{ formatPosition(duration) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="player-info">
+            <h3>Position Management</h3>
+            <div class="position-controls">
+              <div class="position-input">
+                <label>Current Position</label>
+                <div class="input-group">
+                  <input 
+                    type="number" 
+                    [(ngModel)]="currentPosition" 
+                    (input)="updateManualPosition()"
+                    min="0"
+                    [max]="duration"
+                    class="google-input"
+                  />
+                  <span class="position-unit">seconds</span>
+                </div>
+              </div>
+              <button class="google-btn" (click)="autoSavePosition()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                  <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z" fill="currentColor"/>
+                </svg>
+                Save Current Position
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="notes-section">
+          <div class="section-header">
+            <h3>Video Notes</h3>
+            <div class="section-actions">
+              <button class="google-btn google-btn-icon" (click)="toggleEditNotes()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="notes-content">
+            <div class="notes-display" *ngIf="!editingNotes">
+              <div class="notes-text" [innerHTML]="video?.notes || 'No notes yet. Click edit to add notes.'"></div>
+              <div class="notes-meta">
+                <span *ngIf="video?.notes">Last updated: {{ formatDate(video?.updatedAt) }}</span>
+              </div>
+            </div>
+
+            <div class="notes-edit" *ngIf="editingNotes">
+              <textarea 
+                class="google-input google-input-textarea notes-textarea" 
+                [(ngModel)]="currentNotes" 
+                placeholder="Enter your notes here..."
+                autofocus
+              ></textarea>
+              <div class="edit-actions">
+                <button class="google-btn google-btn-secondary" (click)="cancelEditNotes()">
+                  Cancel
+                </button>
+                <button class="google-btn" (click)="saveNotes()" [disabled]="!currentNotes.trim()">
+                  Save Notes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Details Section -->
+        <div class="video-details-section">
+          <h3>Video Details</h3>
+          <div class="details-grid">
+            <div class="detail-item">
+              <label>Title</label>
+              <span>{{ video?.videoTitle || 'Untitled' }}</span>
+            </div>
+            <div class="detail-item">
+              <label>URL</label>
+              <a [href]="video?.videoUrl" target="_blank" *ngIf="video?.videoUrl">
+                {{ getShortUrl(video!.videoUrl!) }}
+              </a>
+              <span *ngIf="!video?.videoUrl">No URL</span>
+            </div>
+            <div class="detail-item">
+              <label>Created</label>
+              <span>{{ formatDate(video?.createdAt) }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Last Updated</label>
+              <span>{{ formatDate(video?.updatedAt) }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Saved Position</label>
+              <span>{{ formatPosition(video?.position) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="detail-actions">
+        <button class="google-btn google-btn-secondary" (click)="goToDay()">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M20 11H4l8-8z" fill="currentColor"/>
+          </svg>
+          Back to Day
+        </button>
+        <button class="google-btn" (click)="editVideo()">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+          </svg>
+          Edit Video
+        </button>
+        <button class="google-btn google-btn-danger" (click)="deleteVideo()">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
+          </svg>
+          Delete Video
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Dialog -->
+<div class="google-dialog" *ngIf="showDeleteDialog">
+  <div class="dialog-overlay" (click)="closeDeleteDialog()"></div>
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <h3 class="dialog-title">Delete Video</h3>
+      <button class="dialog-close" (click)="closeDeleteDialog()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <p>Are you sure you want to delete "{{ video?.videoTitle || 'this video' }}"? This action cannot be undone.</p>
+    </div>
+    <div class="dialog-actions">
+      <button class="google-btn google-btn-secondary" (click)="closeDeleteDialog()">
+        Cancel
+      </button>
+      <button class="google-btn google-btn-danger" (click)="confirmDelete()">
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

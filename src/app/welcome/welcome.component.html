@@ -1,1 +1,332 @@
-<p>welcome works!</p>
+<div class="page-container">
+  <app-header></app-header>
+
+  <div class="page-content">
+    <div class="welcome-container">
+      <!-- Progress Header -->
+      <div class="progress-header">
+        <div class="progress-title">
+          <h2 class="welcome-title">Welcome back!</h2>
+          <p class="welcome-subtitle">Here's your learning journey</p>
+        </div>
+        <div class="progress-actions">
+          <button class="google-btn google-btn-secondary" (click)="refreshProgress()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Navigation Buttons -->
+      <div class="quick-nav-buttons">
+        <button class="quick-nav-btn" (click)="navigateToCurrentYear()" title="Current Year">
+          <span class="quick-nav-icon year-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10H5v5h2v-5zm10 0h-2v5h2v-5z" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="quick-nav-text">
+            <span class="quick-nav-label">Current Year</span>
+            <span class="quick-nav-value">{{ currentYear }}</span>
+          </span>
+        </button>
+
+        <button class="quick-nav-btn" (click)="navigateToCurrentMonth()" title="Current Month">
+          <span class="quick-nav-icon month-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM7 11H5v2h2v-2zm10 0h-2v2h2v-2z" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="quick-nav-text">
+            <span class="quick-nav-label">Current Month</span>
+            <span class="quick-nav-value">{{ currentMonthName }} {{ currentYear }}</span>
+          </span>
+        </button>
+
+        <button class="quick-nav-btn" (click)="navigateToToday()" title="Today">
+          <span class="quick-nav-icon today-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10H5v2h2v-2zm5-4h2v2h-2V6zm5 4h2v2h-2v-2z" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="quick-nav-text">
+            <span class="quick-nav-label">Today</span>
+            <span class="quick-nav-value">{{ todayDate }}</span>
+          </span>
+        </button>
+
+        <button class="quick-nav-btn" (click)="navigateToYesterday()" title="Yesterday">
+          <span class="quick-nav-icon yesterday-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M20 1H4c-1.1 0-2 .9-2 2v18l7-3 7 3V3c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="quick-nav-text">
+            <span class="quick-nav-label">Yesterday</span>
+            <span class="quick-nav-value">{{ yesterdayDate }}</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Daily Progress Card -->
+      <div class="progress-cards">
+        <div class="progress-card featured">
+          <div class="card-header">
+            <h3>Today's Progress</h3>
+            <div class="card-date">{{ todayDate }}</div>
+          </div>
+          <div class="card-content">
+            <div class="progress-circle">
+              <svg viewBox="0 0 100 100" class="circle-bg">
+                <circle cx="50" cy="50" r="45" class="circle-track"/>
+                <circle 
+                  cx="50" 
+                  cy="50" 
+                  r="45" 
+                  class="circle-progress"
+                  [attr.stroke-dasharray]="circleProgress"
+                  [attr.stroke-dashoffset]="circleOffset"
+                />
+              </svg>
+              <div class="circle-text">
+                <span class="time-watched">{{ formatDuration(progressStats?.today?.totalTimeWatched || 0) }}</span>
+                <span class="time-label">Today</span>
+              </div>
+            </div>
+            <div class="progress-details">
+              <div class="detail-row">
+                <span class="detail-label">Videos</span>
+                <span class="detail-value">{{ progressStats?.today?.videosWatched || 0 }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Notes</span>
+                <span class="detail-value">{{ progressStats?.today?.notesTaken || 0 }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Longest Session</span>
+                <span class="detail-value">{{ formatDuration(progressStats?.today?.longestSession || 0) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Progress Card -->
+        <div class="progress-card">
+          <div class="card-header">
+            <h3>This Week</h3>
+            <div class="card-date">{{ weekRange }}</div>
+          </div>
+          <div class="card-content">
+            <div class="weekly-breakdown">
+              <div class="week-stats">
+                <div class="stat-value">{{ formatDuration(progressStats?.thisWeek?.totalTime || 0) }}</div>
+                <div class="stat-label">Total</div>
+              </div>
+              <div class="week-stats">
+                <div class="stat-value">{{ progressStats?.thisWeek?.averageTime | number:'1.1' }}h/day</div>
+                <div class="stat-label">Average</div>
+              </div>
+              <div class="week-stats">
+                <div class="stat-value">{{ progressStats?.thisWeek?.totalDays || 0 }}</div>
+                <div class="stat-label">Active Days</div>
+              </div>
+            </div>
+            <div class="week-chart">
+              <div *ngFor="let day of progressStats?.thisWeek?.dailyBreakdown; let i = index" 
+                   class="week-day" 
+                   [class.week-day-active]="day.totalTimeWatched > 0"
+                   [style.height.%]="getDayHeight(day.totalTimeWatched)"
+                   [attr.title]="day.dayOfWeek + ': ' + formatDuration(day.totalTimeWatched)">
+                <span class="day-tooltip">{{ day.dayOfWeek.charAt(0) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- All-Time Stats Card -->
+        <div class="progress-card">
+          <div class="card-header">
+            <h3>All-Time Stats</h3>
+          </div>
+          <div class="card-content">
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-icon total">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v6h-2zm0 8h2v2h-2z" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ formatDuration(progressStats?.allTime || 0) }}</span>
+                  <span class="stat-label">Total Time</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon streak">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ progressStats?.currentStreak || 0 }} days</span>
+                  <span class="stat-label">Current Streak</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon best">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v6h-2zm0 8h2v2h-2z" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ formatDuration(progressStats?.bestDay?.totalTimeWatched || 0) }}</span>
+                  <span class="stat-label">Best Day</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon average">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ formatDuration(progressStats?.averagePerDay || 0) }}/day</span>
+                  <span class="stat-label">Daily Average</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Motivation Section -->
+      <div class="motivation-section" *ngIf="motivationMessages.length > 0">
+        <h3>Daily Motivation</h3>
+        <div class="motivation-carousel">
+          <div class="motivation-card" *ngFor="let message of motivationMessages; let i = index" [class.active]="activeMessageIndex === i">
+            <div class="motivation-emoji">{{ message.emoji }}</div>
+            <div class="motivation-content">
+              <p class="motivation-text">{{ message.text }}</p>
+              <div class="motivation-progress">
+                <div class="progress-bar" [style.width.%]="message.progress"></div>
+              </div>
+              <span class="motivation-type">{{ getMessageTypeLabel(message.type) }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="motivation-nav">
+          <button class="nav-btn" (click)="prevMessage()" [disabled]="activeMessageIndex === 0">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"/>
+            </svg>
+          </button>
+          <span class="nav-indicator">{{ activeMessageIndex + 1 }} / {{ motivationMessages.length }}</span>
+          <button class="nav-btn" (click)="nextMessage()" [disabled]="activeMessageIndex === motivationMessages.length - 1">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Navigation -->
+      <div class="quick-nav">
+        <h3>Quick Navigation</h3>
+        <div class="options-grid">
+          <div class="option-card" (click)="navigateToCurrentYear()">
+            <div class="option-icon year-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10H5v5h2v-5zm10 0h-2v5h2v-5z" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="option-content">
+              <h3>Current Year</h3>
+              <p>{{ currentYear }}</p>
+            </div>
+          </div>
+
+          <div class="option-card" (click)="navigateToCurrentMonth()">
+            <div class="option-icon month-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM7 11H5v2h2v-2zm10 0h-2v2h2v-2z" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="option-content">
+              <h3>Current Month</h3>
+              <p>{{ currentMonthName }} {{ currentYear }}</p>
+            </div>
+          </div>
+
+          <div class="option-card" (click)="navigateToToday()">
+            <div class="option-icon today-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10H5v2h2v-2zm5-4h2v2h-2V6zm5 4h2v2h-2v-2z" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="option-content">
+              <h3>Today</h3>
+              <p>{{ todayDate }}</p>
+            </div>
+          </div>
+
+          <div class="option-card" (click)="navigateToYesterday()">
+            <div class="option-icon yesterday-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M20 1H4c-1.1 0-2 .9-2 2v18l7-3 7 3V3c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="option-content">
+              <h3>Yesterday</h3>
+              <p>{{ yesterdayDate }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Breakdown Chart -->
+      <div class="weekly-breakdown-section" *ngIf="(progressStats?.thisWeek?.totalTime || 0) > 0">
+        <h3>Weekly Breakdown</h3>
+        <div class="weekly-chart-large">
+          <div *ngFor="let day of progressStats?.thisWeek?.dailyBreakdown; let i = index" 
+               class="week-day-large"
+               [style.height.%]="getDayHeight(day.totalTimeWatched)"
+               [class.week-day-large-active]="day.totalTimeWatched > 0"
+               [attr.title]="day.dayOfWeek + ': ' + formatDuration(day.totalTimeWatched)">
+            <div class="day-info">
+              <span class="day-name">{{ day.dayOfWeek }}</span>
+              <span class="day-time">{{ formatDuration(day.totalTimeWatched) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-section">
+        <h3>About Video Notes</h3>
+        <p>This app helps you track your video watching progress and learning journey.</p>
+        <ul>
+          <li>Automatically save the position where you left off in any video</li>
+          <li>Add notes for each video</li>
+          <li>Track your learning time and progress</li>
+          <li>Browse your notes by year, month, or day</li>
+          <li>All data is stored locally on your device</li>
+          <li>Get motivated with daily progress tracking and encouragement</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

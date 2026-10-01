@@ -1,1 +1,89 @@
-<p>month works!</p>
+<div class="page-container">
+  <app-header></app-header>
+
+  <div class="page-content">
+    <div class="month-container">
+      <div class="breadcrumb">
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goHome()">Home</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goToYear()">{{ year }}</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span>{{ monthName }} {{ year }}</span>
+        </div>
+      </div>
+
+      <h2 class="page-title">{{ monthName }} {{ year }}</h2>
+      <p class="page-subtitle">Select a day to view videos and notes</p>
+
+      <div class="days-grid">
+        <div 
+          *ngFor="let day of days"
+          class="day-card" 
+          [class.day-card-today]="isToday(day)"
+          [class.day-card-active]="hasDataForDay(day)"
+          (click)="navigateToDay(day)"
+        >
+          <div class="day-icon">
+            <span class="day-number">{{ day }}</span>
+            <span class="day-suffix">{{ getDaySuffix(day) }}</span>
+          </div>
+          <div class="day-content">
+            <h3>{{ getDayName(day) }}</h3>
+            <p>{{ getDayStats(day) }}</p>
+          </div>
+          <div class="day-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="month-stats" *ngIf="monthStats">
+        <div class="stat-card">
+          <h4>Month Statistics</h4>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value">{{ monthStats.totalVideos }}</span>
+              <span class="stat-label">Total Videos</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ monthStats.totalNotes }}</span>
+              <span class="stat-label">Total Notes</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ monthStats.activeDays }}</span>
+              <span class="stat-label">Active Days</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ monthStats.avgVideosPerDay }}</span>
+              <span class="stat-label">Avg Videos/Day</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="month-calendar" *ngIf="showCalendar">
+        <div class="calendar-header">
+          <button (click)="previousMonth()" [disabled]="!canGoToPreviousMonth()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"/>
+            </svg>
+          </button>
+          <span>{{ monthName }} {{ year }}</span>
+          <button (click)="nextMonth()" [disabled]="!canGoToNextMonth()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

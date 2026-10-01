@@ -1,6 +1,8 @@
 // Google Apps Theme
 // Colors matching Google's Material Design
 
+@use 'sass:color';
+
 $google-blue: #1a73e8;
 $google-red: #d93025;
 $google-yellow: #fbbc05;
@@ -17,6 +19,139 @@ $google-active: rgba(0, 0, 0, 0.1);
 
 // Google Font
 $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
+
+// Page layout (shared across routed components)
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1;
+  padding: 24px;
+}
+
+// Page header
+.page-header {
+  background-color: $google-white;
+  border-bottom: 1px solid $google-border;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    font-weight: 500;
+    color: $google-text;
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #d946ef 65%, #ec4899 100%);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+  }
+
+  .app-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: $google-text;
+    margin: 0;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $google-hover;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: $google-blue;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+    }
+  }
+}
+
+// Page title
+.page-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: $google-text;
+  margin: 0 0 16px 0;
+}
+
+// Page subtitle
+.page-subtitle {
+  font-size: 16px;
+  color: $google-text-secondary;
+  margin: 0 0 24px 0;
+}
+
+// Breadcrumb navigation
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: $google-text-secondary;
+
+    .breadcrumb-link {
+      color: $google-blue;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .breadcrumb-separator {
+      color: $google-text-secondary;
+    }
+  }
+}
 
 // Google apps header style
 .google-header {
@@ -52,7 +187,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
   .logo-icon {
     width: 32px;
     height: 32px;
-    background: linear-gradient(45deg, $google-blue, $google-red, $google-yellow, $google-green);
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #d946ef 65%, #ec4899 100%);
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -139,12 +274,12 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
   margin: 4px;
 
   &:hover {
-    background-color: darken($google-blue, 5%);
+    background-color: color.adjust($google-blue, $lightness: -5%);
     box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
   }
 
   &:active {
-    background-color: darken($google-blue, 10%);
+    background-color: color.adjust($google-blue, $lightness: -10%);
   }
 
   &-secondary {
@@ -179,7 +314,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
     color: white;
 
     &:hover {
-      background-color: darken($google-red, 5%);
+      background-color: color.adjust($google-red, $lightness: -5%);
     }
   }
 }
@@ -253,7 +388,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
       color: white;
 
       &:hover {
-        background-color: darken($google-blue, 5%);
+        background-color: color.adjust($google-blue, $lightness: -5%);
       }
     }
 

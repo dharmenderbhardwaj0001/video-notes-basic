@@ -5,6 +5,9 @@ export interface VideoNote {
   notes: string;
   timestamp: Date; // When the note was created/updated
   position: number; // Position in the video (seconds)
+  startTime?: Date; // When video watching started
+  endTime?: Date; // When video watching ended
+  durationWatched?: number; // Duration watched in seconds
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,6 +26,45 @@ export interface MonthData {
 export interface YearData {
   year: number;
   months: MonthData[];
+}
+
+// Progress tracking types
+export interface DailyProgress {
+  date: Date;
+  totalTimeWatched: number; // in seconds
+  videosWatched: number;
+  notesTaken: number;
+  longestSession: number; // in seconds
+  dayOfWeek: string;
+}
+
+export interface WeeklyProgress {
+  weekStart: Date;
+  weekEnd: Date;
+  totalTime: number;
+  totalDays: number;
+  dailyBreakdown: DailyProgress[];
+  averageTime: number;
+  longestStreak: number;
+}
+
+export interface ProgressStats {
+  today: DailyProgress;
+  yesterday: DailyProgress;
+  thisWeek: WeeklyProgress;
+  thisMonth: number; // total time this month in seconds
+  allTime: number; // total time all-time in seconds
+  averagePerDay: number;
+  bestDay: DailyProgress;
+  currentStreak: number;
+}
+
+// Motivation types
+export interface MotivationMessage {
+  type: 'achievement' | 'encouragement' | 'tip' | 'milestone';
+  text: string;
+  emoji: string;
+  progress: number; // 0-100 percentage
 }
 
 // Navigation types
@@ -46,4 +88,126 @@ export function getMonthKey(year: number, month: number): string {
 // Helper to get year key
 export function getYearKey(year: number): string {
   return year.toString();
+}
+
+// Helper to calculate time watched between start and end
+export function calculateTimeWatched(startTime: Date | undefined, endTime: Date | undefined, position: number = 0): number {
+  if (!startTime || !endTime) return position; // Fallback to position if no timestamps
+  const diffMs = endTime.getTime() - startTime.getTime();
+  return Math.max(Math.floor(diffMs / 1000), position);
+}
+
+// Helper to format duration
+export function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`;
+  if (seconds < 3600) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  }
+  const hours = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  return `${hours}h ${mins}m`;
+}
+
+// Total number of bundled video thumbnails (public/assets/thumbnails/thumb-N.svg)
+export const THUMBNAIL_COUNT = 100;
+
+// Helper to get a unique thumbnail path (1..100) for a video id.
+// Deterministic per id, so a video keeps the same thumbnail, and it
+// cycles/repeats after 100 videos. Falls back to the title when there is no id.
+export function getVideoThumbnail(idOrSeed: string | undefined | null): string {
+  const seed = idOrSeed || 'video';
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+  }
+  const index = (Math.abs(hash) % THUMBNAIL_COUNT) + 1;
+  return `assets/thumbnails/thumb-${index}.svg`;
+}
+
+// Helper to get progress message
+export function getProgressMessage(stats: ProgressStats): MotivationMessage[] {
+  const messages: MotivationMessage[] = [];
+  
+  // Today's progress
+  const todayPercent = Math.min((stats.today.totalTimeWatched / 3600) * 10, 100); // 10 hours = 100%
+  
+  if (stats.today.totalTimeWatched >= 7200) { // 2+ hours
+    messages.push({
+      type: 'achievement',
+      text: `Amazing! You've watched over 2 hours today!`,
+      emoji: '🏆',
+      progress: 100
+    });
+  } else if (stats.today.totalTimeWatched >= 3600) { // 1+ hour
+    messages.push({
+      type: 'achievement',
+      text: `Great job! Over 1 hour of learning today!`,
+      emoji: '🎯',
+      progress: todayPercent
+    });
+  } else if (stats.today.totalTimeWatched > 0) {
+    messages.push({
+      type: 'encouragement',
+      text: `Good start! Keep going to reach your daily goal!`,
+      emoji: '💪',
+      progress: todayPercent
+    });
+  }
+  
+  // Streak motivation
+  if (stats.currentStreak >= 7) {
+    messages.push({
+      type: 'milestone',
+      text: `Incredible! ${stats.currentStreak}-day streak! Keep it going!`,
+      emoji: '🔥',
+      progress: 100
+    });
+  } else if (stats.currentStreak >= 3) {
+    messages.push({
+      type: 'encouragement',
+      text: `Nice streak! ${stats.currentStreak} days in a row!`,
+      emoji: '✨',
+      progress: (stats.currentStreak / 7) * 100
+    });
+  }
+  
+  // Weekly progress
+  if (stats.thisWeek.totalTime >= 25200) { // 7+ hours
+    messages.push({
+      type: 'milestone',
+      text: `Weekly champion! Over 7 hours this week!`,
+      emoji: '🌟',
+      progress: 100
+    });
+  }
+  
+  // Tips
+  if (stats.today.totalTimeWatched === 0 && new Date().getHours() < 18) {
+    messages.push({
+      type: 'tip',
+      text: `Today's a great day to learn something new!`,
+      emoji: '💡',
+      progress: 0
+    });
+  }
+  
+  // Ensure at least one message
+  if (messages.length === 0) {
+    messages.push({
+      type: 'encouragement',
+      text: `Every minute of learning counts!`,
+      emoji: '📚',
+      progress: stats.allTime > 0 ? Math.min((stats.allTime / 86400) * 100, 100) : 0
+    });
+  }
+  
+  return messages;
+}
+
+// Helper to get random motivation emoji
+export function getRandomEmoji(): string {
+  const emojis = ['🎯', '🏆', '🔥', '✨', '🌟', '💪', '📚', '💡', '🚀', '🌈', '🌱', '🌻', '🎉', '🎊', '🎓'];
+  return emojis[Math.floor(Math.random() * emojis.length)];
 }

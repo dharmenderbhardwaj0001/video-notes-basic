@@ -1,0 +1,271 @@
+@use '../shared/google-theme' as *;
+
+.month-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+
+  .day-card {
+    background-color: $google-white;
+    border: 1px solid $google-border;
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+
+    &:hover {
+      border-color: $google-blue;
+      box-shadow: 0 1px 4px 0 rgba($google-blue, 0.2), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
+      transform: translateY(-2px);
+    }
+
+    &-active {
+      border-color: $google-blue;
+      background-color: rgba($google-blue, 0.02);
+    }
+
+    &-today {
+      border-color: $google-green;
+      background-color: rgba($google-green, 0.05);
+    }
+
+    .day-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, $google-blue, $google-blue);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      .day-number {
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+        line-height: 1;
+      }
+
+      .day-suffix {
+        font-size: 10px;
+        color: white;
+        opacity: 0.8;
+      }
+    }
+
+    .day-content {
+      flex: 1;
+
+      h3 {
+        font-size: 14px;
+        font-weight: 500;
+        color: $google-text;
+        margin: 0 0 4px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      p {
+        font-size: 12px;
+        color: $google-text-secondary;
+        margin: 0;
+      }
+    }
+
+    .day-arrow {
+      width: 20px;
+      height: 20px;
+      color: $google-text-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.month-stats {
+  margin-top: 24px;
+
+  .stat-card {
+    background-color: $google-white;
+    border: 1px solid $google-border;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+
+    h4 {
+      font-size: 16px;
+      font-weight: 500;
+      color: $google-text;
+      margin: 0 0 16px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 16px;
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        .stat-value {
+          font-size: 20px;
+          font-weight: 500;
+          color: $google-blue;
+        }
+
+        .stat-label {
+          font-size: 11px;
+          color: $google-text-secondary;
+          margin-top: 4px;
+        }
+      }
+    }
+  }
+}
+
+.month-calendar {
+  margin-top: 32px;
+  
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background-color: $google-white;
+    border: 1px solid $google-border;
+    border-radius: 8px;
+    padding: 16px;
+
+    button {
+      background: none;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $google-text-secondary;
+
+      &:hover:not(:disabled) {
+        background-color: $google-hover;
+        color: $google-text;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    span {
+      font-size: 16px;
+      font-weight: 500;
+      color: $google-text;
+    }
+  }
+}
+
+.nav-back {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $google-text-secondary;
+  margin-right: 16px;
+
+  &:hover {
+    background-color: $google-hover;
+    color: $google-text;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .days-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stat-card .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .days-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .day-card {
+    padding: 8px 12px;
+
+    .day-icon {
+      width: 36px;
+      height: 36px;
+
+      .day-number {
+        font-size: 14px;
+      }
+    }
+
+    .day-content {
+      h3 {
+        font-size: 12px;
+      }
+      
+      p {
+        font-size: 11px;
+      }
+    }
+  }
+
+  .stat-card .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-header {
+    gap: 16px;
+    padding: 12px;
+
+    button {
+      width: 32px;
+      height: 32px;
+    }
+
+    span {
+      font-size: 14px;
+    }
+  }
+}

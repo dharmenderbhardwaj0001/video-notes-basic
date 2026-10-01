@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Video thumbnail 40">
+  <defs>
+    <linearGradient id="g40" gradientTransform="rotate(40 0.5 0.5)">
+      <stop offset="0%" stop-color="hsl(323, 83%, 46%)"/>
+      <stop offset="100%" stop-color="hsl(30, 82%, 42%)"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="180" fill="url(#g40)"/>
+  <path d="M 120 120 q 40 -60 80 -40" stroke="hsl(163, 80%, 78%)" stroke-width="4" fill="none" opacity="0.8"/><path d="M 190 74 l 14 -10 -14 -10 z" fill="hsl(239, 70%, 62%)"/><circle cx="120" cy="120" r="12" fill="hsl(279, 72%, 70%)"/>
+  <circle cx="46.7" cy="66.2" r="1.21" fill="#ffffff" opacity="0.80"/><circle cx="172.1" cy="59.3" r="0.77" fill="#ffffff" opacity="0.89"/><circle cx="93.0" cy="106.8" r="1.91" fill="#ffffff" opacity="0.76"/><circle cx="94.8" cy="76.0" r="1.15" fill="#ffffff" opacity="0.80"/><circle cx="24.5" cy="47.3" r="1.18" fill="#ffffff" opacity="0.41"/><circle cx="72.5" cy="94.6" r="2.00" fill="#ffffff" opacity="0.59"/><circle cx="168.9" cy="5.3" r="2.34" fill="#ffffff" opacity="0.50"/><circle cx="231.6" cy="19.8" r="2.28" fill="#ffffff" opacity="0.84"/><circle cx="309.1" cy="72.0" r="1.63" fill="#ffffff" opacity="0.56"/><circle cx="295.6" cy="49.2" r="1.32" fill="#ffffff" opacity="0.55"/><circle cx="180.3" cy="171.9" r="0.63" fill="#ffffff" opacity="0.43"/><circle cx="189.4" cy="54.0" r="0.96" fill="#ffffff" opacity="0.72"/><circle cx="181.6" cy="42.7" r="1.85" fill="#ffffff" opacity="0.99"/><circle cx="217.1" cy="158.5" r="1.77" fill="#ffffff" opacity="0.45"/><circle cx="60.0" cy="55.5" r="1.93" fill="#ffffff" opacity="0.50"/><circle cx="173.4" cy="0.7" r="2.27" fill="#ffffff" opacity="0.69"/><circle cx="48.7" cy="174.8" r="2.26" fill="#ffffff" opacity="0.92"/><circle cx="267.7" cy="91.6" r="1.10" fill="#ffffff" opacity="0.57"/><circle cx="297.9" cy="118.4" r="0.94" fill="#ffffff" opacity="0.88"/><circle cx="21.9" cy="55.7" r="2.25" fill="#ffffff" opacity="0.72"/><path d="M 21.9 51.7 L 21.9 59.7 M 17.9 55.7 L 25.9 55.7" stroke="#ffffff" stroke-width="0.8" opacity="0.7"/><circle cx="199.1" cy="177.3" r="2.22" fill="#ffffff" opacity="0.96"/><circle cx="261.6" cy="50.6" r="1.61" fill="#ffffff" opacity="0.42"/><circle cx="163.1" cy="176.1" r="1.88" fill="#ffffff" opacity="0.47"/><circle cx="200.8" cy="147.6" r="1.83" fill="#ffffff" opacity="0.54"/><circle cx="91.3" cy="172.4" r="0.82" fill="#ffffff" opacity="0.56"/><circle cx="179.2" cy="11.1" r="1.30" fill="#ffffff" opacity="0.85"/>
+  <circle cx="272" cy="40" r="30" fill="rgba(0,0,0,0.18)"/>
+  <text x="272" y="40" font-size="40" text-anchor="middle"
+    dominant-baseline="central" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">🐍</text>
+  <rect x="0" y="150" width="320" height="30" fill="rgba(0,0,0,0.22)"/>
+  <text x="12" y="170" font-family="Roboto, Arial, sans-serif" font-size="13" font-weight="600" fill="#ffffff">Video 40</text>
+  <text x="308" y="170" text-anchor="end" font-family="Roboto, Arial, sans-serif" font-size="12" fill="rgba(255,255,255,0.85)">🐍</text>
+</svg>
