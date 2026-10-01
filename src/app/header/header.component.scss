@@ -48,3 +48,27 @@
     color: $google-text-secondary;
   }
 }
+
+.storage-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid $google-border;
+  border-radius: 50%;
+  background: transparent;
+  color: $google-text-secondary;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover {
+    background-color: $google-hover;
+    color: $google-text;
+  }
+
+  &.storage-btn-connected {
+    color: #1e8e3e;
+    border-color: #1e8e3e;
+  }
+}

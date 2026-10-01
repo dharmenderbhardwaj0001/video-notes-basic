@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { FileStorageService } from './file-storage.service';
 import { 
   VideoNote, DayData, MonthData, YearData, generateId, getDateKey, 
   calculateTimeWatched, formatDuration, DailyProgress, ProgressStats, 
@@ -9,29 +12,144 @@ import {
   providedIn: 'root'
 })
 export class StorageService {
-  private readonly STORAGE_KEY = 'video_notes_app';
+  /** Data file inside the connected storage folder. */
+  private readonly DATA_FILE = 'video-notes.json';
 
-  constructor() {}
+  /** Old localStorage key from before file storage existed. */
+  private readonly LEGACY_KEY = 'video_notes_app';
 
-  // Initialize storage with default structure if not exists
-  private initializeStorage(): void {
-    const existingData = localStorage.getItem(this.STORAGE_KEY);
-    if (!existingData) {
-      const initialData: YearData[] = [];
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(initialData));
+  /** In-memory dataset; components read from it synchronously. */
+  private memoryData: YearData[] | null = null;
+
+  /** True when the local Node persistence API (server.js) is reachable. */
+  private apiAvailable: boolean = false;
+
+  private readonly NOTES_API = '/api/notes';
+
+  constructor(private fileStorage: FileStorageService, private http: HttpClient) {}
+
+  /** True when data is being saved to a real file on the PC. */
+  get storageConnected(): boolean {
+    return this.apiAvailable || this.fileStorage.connected;
+  }
+
+  /** Name of the connected storage folder on the PC. */
+  get storageFolderName(): string {
+    return this.fileStorage.connected ? this.fileStorage.folderName : 'notes';
+  }
+
+  /**
+   * Runs once at app startup, before any component reads data. Loads the
+   * dataset from the local Node persistence API (notes/video-notes.json)
+   * and, when a storage folder is connected, from the file-system copy.
+   * The freshest copy wins; the old localStorage key is migrated one
+   * last time and deleted.
+   */
+  async loadFromDisk(): Promise<void> {
+    const legacy = this.readLegacyData();
+
+    const fileData = (await this.fileStorage.init())
+      ? await this.fileStorage.readFileAs<YearData[]>(this.DATA_FILE)
+      : null;
+    const apiData = await this.readApiData();
+
+    // Pick the dataset with the most recent change; prefer the API on ties
+    // because it is the primary storage while the dev server is running.
+    const candidates: { data: YearData[], source: 'api' | 'file' | 'legacy' }[] = [
+      { data: apiData ?? [], source: 'api' },
+      { data: fileData ?? [], source: 'file' },
+      { data: legacy, source: 'legacy' }
+    ];
+    let best = candidates[0];
+    for (const candidate of candidates.slice(1)) {
+      const candidateTime = this.getLatestUpdatedAt(candidate.data);
+      const bestTime = this.getLatestUpdatedAt(best.data);
+      if (candidateTime > bestTime ||
+          (candidateTime === bestTime && candidate.data.length > best.data.length)) {
+        best = candidate;
+      }
+    }
+    this.memoryData = best.data;
+
+    // Converge every store onto the winning dataset.
+    this.saveAllData(best.data);
+  }
+
+  /** Reads the dataset from the Node API; null when the API is not running. */
+  private async readApiData(): Promise<YearData[] | null> {
+    try {
+      const data = await firstValueFrom(this.http.get<YearData[]>(this.NOTES_API));
+      this.apiAvailable = true;
+      return Array.isArray(data) ? data : [];
+    } catch {
+      this.apiAvailable = false;
+      return null;
     }
   }
 
-  // Get all data from storage
-  private getAllData(): YearData[] {
-    this.initializeStorage();
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+  /**
+   * Connects the storage folder on the PC. Must be triggered by a user
+   * gesture (button click). The first time it opens the folder picker;
+   * afterwards it re-grants access. Merges and flushes current data.
+   */
+  async connectStorage(): Promise<void> {
+    await this.fileStorage.connect();
+    const fileData = await this.fileStorage.readFileAs<YearData[]>(this.DATA_FILE);
+
+    if (fileData && this.getLatestUpdatedAt(fileData) > this.getLatestUpdatedAt(this.getAllData())) {
+      this.memoryData = fileData;
+    }
+    this.saveAllData(this.getAllData());
   }
 
-  // Save all data to storage
+  /**
+   * One-time migration: reads the old localStorage copy and deletes the
+   * key, so localStorage is never used again after startup.
+   */
+  private readLegacyData(): YearData[] {
+    try {
+      const raw = localStorage.getItem(this.LEGACY_KEY);
+      if (!raw) return [];
+      localStorage.removeItem(this.LEGACY_KEY);
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  /** Newest updatedAt across all video notes, used to compare two datasets. */
+  private getLatestUpdatedAt(data: YearData[]): number {
+    let latest = 0;
+    for (const year of data) {
+      for (const month of year?.months || []) {
+        for (const day of month?.days || []) {
+          for (const video of day?.videos || []) {
+            const time = new Date(video?.updatedAt || 0).getTime();
+            if (!isNaN(time) && time > latest) {
+              latest = time;
+            }
+          }
+        }
+      }
+    }
+    return latest;
+  }
+
+  // Get the in-memory dataset
+  private getAllData(): YearData[] {
+    return this.memoryData ?? [];
+  }
+
+  // Save all data to the JSON file on the PC (notes/video-notes.json via
+  // the Node API, plus the connected storage folder when available).
+  // No localStorage involved.
   private saveAllData(data: YearData[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+    this.memoryData = data;
+    this.http.put(this.NOTES_API, data).subscribe({
+      error: () => { this.apiAvailable = false; }
+    });
+    this.fileStorage.writeFile(this.DATA_FILE, data);
   }
 
   // Get year data

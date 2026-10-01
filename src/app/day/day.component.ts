@@ -39,10 +39,10 @@ export class DayComponent implements OnInit {
     position: 0
   };
 
-  // Split position inputs for the dialog
-  positionHours: number = 0;
-  positionMinutes: number = 0;
-  positionSeconds: number = 0;
+  // Split position inputs for the dialog (null = empty field)
+  positionHours: number | null = null;
+  positionMinutes: number | null = null;
+  positionSeconds: number | null = null;
 
   // Action passed to the shared header (Add Video button)
   addVideoAction = (): void => this.openAddVideoDialog();
@@ -144,8 +144,26 @@ export class DayComponent implements OnInit {
     return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
+  // Readable milestone text for a saved position, e.g.
+  // "Watched till 3 hours 0 minutes" or "Watched till 45 minutes 30 seconds"
   formatPosition(seconds: number): string {
-    return this.formatDuration(seconds);
+    if (!seconds || seconds <= 0) return '';
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    const parts: string[] = [];
+
+    if (hours > 0) {
+      parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`, `${minutes} minute${minutes !== 1 ? 's' : ''}`);
+    } else if (minutes > 0) {
+      parts.push(`${minutes} minute${minutes !== 1 ? 's' : ''}`);
+    }
+    if (secs > 0) {
+      parts.push(`${secs} second${secs !== 1 ? 's' : ''}`);
+    }
+
+    return `Watched till ${parts.join(' ')}`;
   }
 
   formatDuration(seconds: number): string {
@@ -189,22 +207,25 @@ export class DayComponent implements OnInit {
     this.showVideoDialog = true;
   }
 
-  // Split a total number of seconds into hours/minutes/seconds inputs
+  // Split a total number of seconds into hours/minutes/seconds inputs.
+  // Zero parts stay empty so the fields never show a prefilled "0".
   private setPositionInputs(totalSeconds: number): void {
     const total = Math.max(0, Math.floor(totalSeconds || 0));
-    this.positionHours = Math.floor(total / 3600);
-    this.positionMinutes = Math.floor((total % 3600) / 60);
-    this.positionSeconds = total % 60;
+    const hours = Math.floor(total / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    const seconds = total % 60;
+    this.positionHours = hours > 0 ? hours : null;
+    this.positionMinutes = minutes > 0 ? minutes : null;
+    this.positionSeconds = seconds > 0 ? seconds : null;
   }
 
-  // Combine the hours/minutes/seconds inputs into currentVideo.position
+  // Combine the hours/minutes/seconds inputs into currentVideo.position.
+  // The raw input values are left untouched so typing/clearing a field
+  // never re-inserts a "0" under the cursor.
   updatePosition(): void {
     const h = Math.max(0, Math.floor(Number(this.positionHours) || 0));
     const m = Math.max(0, Math.floor(Number(this.positionMinutes) || 0));
     const s = Math.max(0, Math.floor(Number(this.positionSeconds) || 0));
-    this.positionHours = h;
-    this.positionMinutes = m;
-    this.positionSeconds = s;
     this.currentVideo.position = h * 3600 + m * 60 + s;
   }
 

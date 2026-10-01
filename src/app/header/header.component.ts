@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
+import { StorageService } from '../storage.service';
 
 @Component({
   selector: 'app-header',
@@ -20,8 +21,13 @@ export class HeaderComponent {
 
   showNameDialog: boolean = false;
   draftName: string = '';
+  storageHint: string = '';
 
-  constructor(private router: Router, public user: UserService) {}
+  constructor(
+    private router: Router,
+    public user: UserService,
+    private storage: StorageService
+  ) {}
 
   get displayName(): string {
     return this.user.name;
@@ -31,6 +37,14 @@ export class HeaderComponent {
     return this.user.name ? `Hi ${this.user.name}` : 'User';
   }
 
+  get storageConnected(): boolean {
+    return this.storage.storageConnected;
+  }
+
+  get storageFolderName(): string {
+    return this.storage.storageFolderName;
+  }
+
   goHome(): void {
     this.router.navigate(['/']);
   }
@@ -38,6 +52,16 @@ export class HeaderComponent {
   triggerAction(): void {
     if (this.onAction) {
       this.onAction();
+    }
+  }
+
+  /** Connect (or reconnect) the folder on the PC where data is stored. */
+  async connectStorage(): Promise<void> {
+    try {
+      this.storageHint = '';
+      await this.storage.connectStorage();
+    } catch (err: any) {
+      this.storageHint = err?.message || 'Could not connect to the storage folder.';
     }
   }
 
