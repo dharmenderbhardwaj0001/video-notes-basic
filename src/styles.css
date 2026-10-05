@@ -2,7 +2,8 @@
 /* Google Apps Theme */
 
 /* CSS Variables for theming */
-:root {
+:root,
+[data-theme='light'] {
   --google-blue: #1a73e8;
   --google-blue-light: #4285f4;
   --google-red: #d93025;
@@ -17,9 +18,212 @@
   --google-border: #dadce0;
   --google-hover: rgba(0, 0, 0, 0.04);
   --google-active: rgba(0, 0, 0, 0.1);
-  
+  --google-on-accent: #ffffff;
+
   /* Fonts */
   --google-font: 'Roboto', 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ---------- Dark themes ---------- */
+
+[data-theme='dark'] {
+  --google-blue: #8ab4f8;
+  --google-blue-light: #aecbfa;
+  --google-red: #f28b82;
+  --google-yellow: #fdd663;
+  --google-green: #81c995;
+  --google-grey: #202124;
+  --google-dark-grey: #9aa0a6;
+  --google-light-grey: #3c4043;
+  --google-white: #292a2d;
+  --google-text: #e8eaed;
+  --google-text-secondary: #9aa0a6;
+  --google-border: #3c4043;
+  --google-hover: rgba(255, 255, 255, 0.06);
+  --google-active: rgba(255, 255, 255, 0.12);
+  --google-on-accent: #202124;
+}
+
+[data-theme='midnight'] {
+  --google-blue: #5fa8d3;
+  --google-blue-light: #8ecae6;
+  --google-red: #e57373;
+  --google-yellow: #f0c674;
+  --google-green: #7fbf7f;
+  --google-grey: #0f1b2d;
+  --google-dark-grey: #8fa3bd;
+  --google-light-grey: #2a3b55;
+  --google-white: #16243a;
+  --google-text: #e6edf3;
+  --google-text-secondary: #94a7bf;
+  --google-border: #2a3b55;
+  --google-hover: rgba(255, 255, 255, 0.06);
+  --google-active: rgba(255, 255, 255, 0.12);
+  --google-on-accent: #0f1b2d;
+}
+
+[data-theme='forest'] {
+  --google-blue: #66bb8a;
+  --google-blue-light: #8fd8a8;
+  --google-red: #ef9a9a;
+  --google-yellow: #e0c36a;
+  --google-green: #81c995;
+  --google-grey: #101a14;
+  --google-dark-grey: #93a89a;
+  --google-light-grey: #263a2c;
+  --google-white: #18261d;
+  --google-text: #e6efe9;
+  --google-text-secondary: #9db3a6;
+  --google-border: #263a2c;
+  --google-hover: rgba(255, 255, 255, 0.06);
+  --google-active: rgba(255, 255, 255, 0.12);
+  --google-on-accent: #0e1912;
+}
+
+[data-theme='coffee'] {
+  --google-blue: #d4a24c;
+  --google-blue-light: #e6bd77;
+  --google-red: #e57373;
+  --google-yellow: #f0c674;
+  --google-green: #9ccc8a;
+  --google-grey: #1c1611;
+  --google-dark-grey: #b3a18c;
+  --google-light-grey: #3d3226;
+  --google-white: #282018;
+  --google-text: #efe6d9;
+  --google-text-secondary: #b5a68f;
+  --google-border: #3d3226;
+  --google-hover: rgba(255, 255, 255, 0.06);
+  --google-active: rgba(255, 255, 255, 0.12);
+  --google-on-accent: #1c1611;
+}
+
+[data-theme='nord'] {
+  --google-blue: #88c0d0;
+  --google-blue-light: #8fbcbb;
+  --google-red: #bf616a;
+  --google-yellow: #ebcb8b;
+  --google-green: #a3be8c;
+  --google-grey: #2e3440;
+  --google-dark-grey: #a9b3c4;
+  --google-light-grey: #4c566a;
+  --google-white: #3b4252;
+  --google-text: #eceff4;
+  --google-text-secondary: #a9b3c4;
+  --google-border: #4c566a;
+  --google-hover: rgba(255, 255, 255, 0.06);
+  --google-active: rgba(255, 255, 255, 0.12);
+  --google-on-accent: #2e3440;
+}
+
+/* ---------- Light themes ---------- */
+
+[data-theme='ocean'] {
+  --google-blue: #0277bd;
+  --google-blue-light: #4fc3f7;
+  --google-red: #d32f2f;
+  --google-yellow: #f9a825;
+  --google-green: #2e7d32;
+  --google-grey: #e7f2f7;
+  --google-dark-grey: #546e7a;
+  --google-light-grey: #cfe3ec;
+  --google-white: #ffffff;
+  --google-text: #12333f;
+  --google-text-secondary: #476b7a;
+  --google-border: #c3dae6;
+  --google-hover: rgba(0, 0, 0, 0.04);
+  --google-active: rgba(0, 0, 0, 0.1);
+  --google-on-accent: #ffffff;
+}
+
+[data-theme='sunset'] {
+  --google-blue: #e8590c;
+  --google-blue-light: #f57c3f;
+  --google-red: #c62828;
+  --google-yellow: #f9a825;
+  --google-green: #2e7d32;
+  --google-grey: #fdf2ea;
+  --google-dark-grey: #8d6e63;
+  --google-light-grey: #f3e0d3;
+  --google-white: #ffffff;
+  --google-text: #3e2723;
+  --google-text-secondary: #7a5c50;
+  --google-border: #ecd9cb;
+  --google-hover: rgba(0, 0, 0, 0.04);
+  --google-active: rgba(0, 0, 0, 0.1);
+  --google-on-accent: #ffffff;
+}
+
+[data-theme='rose'] {
+  --google-blue: #d6336c;
+  --google-blue-light: #f06595;
+  --google-red: #c2255c;
+  --google-yellow: #f59f00;
+  --google-green: #2b8a3e;
+  --google-grey: #fdf0f4;
+  --google-dark-grey: #a06175;
+  --google-light-grey: #f5dde7;
+  --google-white: #ffffff;
+  --google-text: #40212d;
+  --google-text-secondary: #8a4d5e;
+  --google-border: #f0d2dd;
+  --google-hover: rgba(0, 0, 0, 0.04);
+  --google-active: rgba(0, 0, 0, 0.1);
+  --google-on-accent: #ffffff;
+}
+
+[data-theme='violet'] {
+  --google-blue: #7c3aed;
+  --google-blue-light: #9775fa;
+  --google-red: #d6336c;
+  --google-yellow: #f59f00;
+  --google-green: #2f9e44;
+  --google-grey: #f5f1fc;
+  --google-dark-grey: #7a6ba8;
+  --google-light-grey: #e5dcf5;
+  --google-white: #ffffff;
+  --google-text: #332061;
+  --google-text-secondary: #6d5d9e;
+  --google-border: #ded4f0;
+  --google-hover: rgba(0, 0, 0, 0.04);
+  --google-active: rgba(0, 0, 0, 0.1);
+  --google-on-accent: #ffffff;
+}
+
+[data-theme='slate'] {
+  --google-blue: #546e7a;
+  --google-blue-light: #78909c;
+  --google-red: #c62828;
+  --google-yellow: #f9a825;
+  --google-green: #2e7d32;
+  --google-grey: #eceff1;
+  --google-dark-grey: #607d8b;
+  --google-light-grey: #cfd8dc;
+  --google-white: #ffffff;
+  --google-text: #263238;
+  --google-text-secondary: #546e7a;
+  --google-border: #cfd8dc;
+  --google-hover: rgba(0, 0, 0, 0.04);
+  --google-active: rgba(0, 0, 0, 0.1);
+  --google-on-accent: #ffffff;
+}
+
+[data-theme='sepia'] {
+  --google-blue: #8d6e63;
+  --google-blue-light: #a1887f;
+  --google-red: #a94426;
+  --google-yellow: #c98f22;
+  --google-green: #6b8e23;
+  --google-grey: #f4ecd8;
+  --google-dark-grey: #8a7a5f;
+  --google-light-grey: #e4d9bd;
+  --google-white: #fffdf6;
+  --google-text: #3f2f22;
+  --google-text-secondary: #6d5f4b;
+  --google-border: #ddcfae;
+  --google-hover: rgba(0, 0, 0, 0.04);
+  --google-active: rgba(0, 0, 0, 0.1);
+  --google-on-accent: #ffffff;
 }
 
 /* Reset and Base Styles */
@@ -163,7 +367,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Selection */
 ::selection {
-  background-color: rgba(var(--google-blue), 0.2);
+  background-color: color-mix(in srgb, var(--google-blue) 25%, transparent);
   color: var(--google-text);
 }
 

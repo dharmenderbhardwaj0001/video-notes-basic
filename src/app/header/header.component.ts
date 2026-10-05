@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
 import { StorageService } from '../storage.service';
+import { ThemeService, ThemeOption } from '../theme.service';
 
 @Component({
   selector: 'app-header',
@@ -22,12 +23,37 @@ export class HeaderComponent {
   showNameDialog: boolean = false;
   draftName: string = '';
   storageHint: string = '';
+  showThemePopup: boolean = false;
 
   constructor(
     private router: Router,
     public user: UserService,
-    private storage: StorageService
+    private storage: StorageService,
+    private themeService: ThemeService
   ) {}
+
+  get themes(): ThemeOption[] {
+    return this.themeService.themes;
+  }
+
+  get currentTheme(): string {
+    return this.themeService.currentTheme;
+  }
+
+  // Close the theme popup when clicking anywhere outside it.
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.showThemePopup = false;
+  }
+
+  toggleThemePopup(): void {
+    this.showThemePopup = !this.showThemePopup;
+  }
+
+  selectTheme(id: string): void {
+    this.themeService.setTheme(id);
+    this.showThemePopup = false;
+  }
 
   get displayName(): string {
     return this.user.name;

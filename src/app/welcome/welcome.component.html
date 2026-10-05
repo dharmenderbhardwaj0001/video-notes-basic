@@ -117,8 +117,29 @@
           </div>
         </div>
 
+        <!-- Top Videos Card -->
+        <div class="progress-card top-videos">
+          <div class="card-header">
+            <h3>Top Videos</h3>
+            <div class="card-date">Top {{ topVideos.length }} by time watched</div>
+          </div>
+          <div class="top-videos-list" *ngIf="topVideos.length > 0; else noTopVideos">
+            <div *ngFor="let video of topVideos; let i = index" class="top-video-item" (click)="navigateToVideoDay(video)" title="Open the day this video was last watched">
+              <span class="top-video-rank">{{ i + 1 }}</span>
+              <img class="top-video-thumb" [src]="getThumbnail(video)" [alt]="video.videoTitle || 'Video thumbnail'" loading="lazy" />
+              <div class="top-video-info">
+                <span class="top-video-title">{{ video.videoTitle || 'Untitled Video' }}</span>
+                <span class="top-video-time">Watched {{ formatDuration(video.durationWatched || 0) }}</span>
+              </div>
+            </div>
+          </div>
+          <ng-template #noTopVideos>
+            <p class="top-videos-empty">No videos watched yet.</p>
+          </ng-template>
+        </div>
+
         <!-- Weekly Progress Card -->
-        <div class="progress-card">
+        <div class="progress-card week-card">
           <div class="card-header">
             <h3>This Week</h3>
             <div class="card-date">{{ weekRange }}</div>
@@ -151,7 +172,7 @@
         </div>
 
         <!-- All-Time Stats Card -->
-        <div class="progress-card">
+        <div class="progress-card alltime-card">
           <div class="card-header">
             <h3>All-Time Stats</h3>
           </div>

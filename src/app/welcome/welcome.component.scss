@@ -57,7 +57,7 @@
 
     &:hover {
       border-color: $google-blue;
-      box-shadow: 0 1px 4px 0 rgba($google-blue, 0.2), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: 0 1px 4px 0 color-mix(in srgb, $google-blue 20%, transparent), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
       transform: translateY(-2px);
     }
 
@@ -117,7 +117,10 @@
 
 .progress-cards {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 3fr 2fr;
+  grid-template-areas:
+    "today top"
+    "week alltime";
   gap: 24px;
   margin-bottom: 32px;
 
@@ -129,8 +132,86 @@
     box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
 
     &.featured {
+      grid-area: today;
       border-color: $google-blue;
-      box-shadow: 0 2px 8px 0 rgba($google-blue, 0.1);
+      box-shadow: 0 2px 8px 0 color-mix(in srgb, $google-blue 10%, transparent);
+    }
+
+    &.top-videos {
+      grid-area: top;
+
+      .top-videos-list {
+        max-height: 280px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding-right: 4px;
+      }
+
+      .top-video-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px;
+        border-radius: 6px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: $google-light-grey;
+        }
+      }
+
+      .top-video-rank {
+        width: 18px;
+        font-size: 12px;
+        font-weight: 500;
+        color: $google-text-secondary;
+        text-align: center;
+        flex-shrink: 0;
+      }
+
+      .top-video-thumb {
+        width: 64px;
+        height: 36px;
+        object-fit: cover;
+        border-radius: 4px;
+        background-color: $google-light-grey;
+        flex-shrink: 0;
+      }
+
+      .top-video-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        .top-video-title {
+          font-size: 13px;
+          color: $google-text;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .top-video-time {
+          font-size: 12px;
+          color: $google-text-secondary;
+        }
+      }
+
+      .top-videos-empty {
+        font-size: 13px;
+        color: $google-text-secondary;
+        margin: 0;
+      }
+    }
+
+    &.week-card {
+      grid-area: week;
+    }
+
+    &.alltime-card {
+      grid-area: alltime;
     }
 
     .card-header {
@@ -293,7 +374,7 @@
           align-items: center;
           gap: 12px;
           padding: 8px;
-          background-color: rgba($google-blue, 0.05);
+          background-color: color-mix(in srgb, $google-blue 5%, transparent);
           border-radius: 8px;
 
           .stat-icon {
@@ -311,22 +392,22 @@
             }
 
             &.total {
-              background-color: rgba($google-blue, 0.1);
+              background-color: color-mix(in srgb, $google-blue 10%, transparent);
               color: $google-blue;
             }
 
             &.streak {
-              background-color: rgba($google-green, 0.1);
+              background-color: color-mix(in srgb, $google-green 10%, transparent);
               color: $google-green;
             }
 
             &.best {
-              background-color: rgba($google-yellow, 0.1);
+              background-color: color-mix(in srgb, $google-yellow 10%, transparent);
               color: $google-yellow;
             }
 
             &.average {
-              background-color: rgba($google-red, 0.1);
+              background-color: color-mix(in srgb, $google-red 10%, transparent);
               color: $google-red;
             }
           }
@@ -373,10 +454,10 @@
 
     .motivation-card {
       display: none;
-      background-color: rgba($google-blue, 0.02);
+      background-color: color-mix(in srgb, $google-blue 2%, transparent);
       border-radius: 8px;
       padding: 20px;
-      border: 1px solid rgba($google-blue, 0.1);
+      border: 1px solid color-mix(in srgb, $google-blue 10%, transparent);
 
       &.active {
         display: block;
@@ -504,7 +585,7 @@
 
     &:hover {
       border-color: $google-blue;
-      box-shadow: 0 1px 4px 0 rgba($google-blue, 0.2), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: 0 1px 4px 0 color-mix(in srgb, $google-blue 20%, transparent), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
       transform: translateY(-2px);
     }
 
@@ -607,7 +688,7 @@
         padding: 4px 8px;
         font-size: 11px;
         color: $google-text-secondary;
-        background-color: white;
+        background-color: $google-white;
         border-radius: 4px 4px 0 0;
       }
 
@@ -623,7 +704,7 @@
 
       &:hover {
         .day-info {
-          background-color: rgba($google-blue, 0.05);
+          background-color: color-mix(in srgb, $google-blue 5%, transparent);
         }
       }
     }
@@ -667,6 +748,11 @@
 @media (max-width: 1024px) {
   .progress-cards {
     grid-template-columns: 1fr;
+    grid-template-areas: none;
+
+    .progress-card {
+      grid-area: auto;
+    }
   }
 }
 

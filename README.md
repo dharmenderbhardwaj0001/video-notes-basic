@@ -1,59 +1,62 @@
-# Notes
+# Video Notes
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.15.
+A local-first web app for tracking the videos you watch and the notes you take while watching them — organized by year, month, and day, with watch progress, a most-watched leaderboard, per-video watch history, and 12 color themes.
 
-## Development server
+Everything runs on your machine. No account, no cloud, no tracking.
 
-To start a local development server, run:
+## What you can do
 
-```bash
-ng serve
-```
+- **Add videos for any day** — give it a title, a YouTube (or any) URL, and optional notes. If the link is a YouTube video, the app shows the video's real thumbnail everywhere it appears.
+- **Track watch progress** — save the position where you left off (hours / minutes / seconds). Videos you're partway through show a "continue watching" badge and their watched-till time.
+- **Browse your watch history** — videos are grouped by year, month, and day, with stats for each (videos watched, time watched, notes taken).
+- **Today's Progress dashboard** — the home page shows today's total watch time, videos, notes, longest session, this week's chart, and all-time stats.
+- **Top Videos card** — your 10 most-watched videos, ranked by total time, with thumbnails and watch time. Click one to jump to the day you last watched it.
+- **Per-video history page** — every video card has a history icon (clock) that opens a timeline of every day you watched that video, with watched-till positions and session times.
+- **Set your name** — click the avatar in the header; the app greets you with it.
+- **Pick a theme** — the palette icon in the header opens a theme picker with 12 themes (Light, Dark, Midnight, Forest, Coffee, Nord, Ocean, Sunset, Rose, Violet, Slate, Sepia). The whole UI follows the chosen theme and it is remembered between sessions.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Getting started
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Requires [Node.js](https://nodejs.org/) (LTS version recommended).
 
 ```bash
-ng generate --help
+npm install
+npm start
 ```
 
-## Building
+`npm start` launches both the app and its local data server, then opens `http://localhost:4200/` (the dev server picks a port if 4200 is taken).
 
-To build the project run:
+Useful commands:
 
-```bash
-ng build
+| Command | What it does |
+| --- | --- |
+| `npm start` | Starts the data API (`server.js`) and the Angular dev server together |
+| `npm run api` | Starts only the data API on port 3000 |
+| `npm run serve` | Starts only the Angular dev server (needs the API for saving) |
+| `npm run build` | Builds the app into `dist/` |
+
+Note: if you only run `npm run serve` without the API, saving fails silently — always use `npm start`.
+
+## Where your data is saved
+
+All data lives in plain files on your own PC, in the `notes/` folder next to `server.js`:
+
+```
+notes/
+├── video-notes.json   # all your video notes (one line per day)
+├── user.json          # your name
+├── theme.json         # your selected color theme
+└── README.txt         # short note about this folder
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- The local API (`server.js`) reads and writes these files automatically as you use the app — no setup or folder picker needed.
+- Every save is written atomically (temp file + rename), so a crash mid-save can't corrupt your data.
+- `video-notes.json` is formatted for humans: each day sits on its own line, so you can read or hand-edit it in any editor.
+- The folder-picker button in the header is only a fallback for browsers supporting the File System Access API when the API server isn't running; Chrome may also keep a copy in the folder you pick.
+- These files are personal data and are excluded from git via `.gitignore`.
 
-## Running unit tests
+## Tech stack
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Angular 19](https://angular.dev/) (standalone components)
+- Zero-dependency Node.js persistence API (`server.js`)
+- SCSS with a CSS-variable theme system

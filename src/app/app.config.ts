@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { StorageService } from './storage.service';
 import { UserService } from './user.service';
+import { ThemeService } from './theme.service';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -16,11 +17,12 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       multi: true,
-      useFactory: (storage: StorageService, user: UserService) => async () => {
+      useFactory: (storage: StorageService, user: UserService, theme: ThemeService) => async () => {
         await storage.loadFromDisk();
         await user.loadFromDisk();
+        await theme.loadFromDisk();
       },
-      deps: [StorageService, UserService]
+      deps: [StorageService, UserService, ThemeService]
     },
     StorageService
   ]

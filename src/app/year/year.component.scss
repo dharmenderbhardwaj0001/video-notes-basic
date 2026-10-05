@@ -26,13 +26,13 @@
 
     &:hover {
       border-color: $google-blue;
-      box-shadow: 0 1px 4px 0 rgba($google-blue, 0.2), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: 0 1px 4px 0 color-mix(in srgb, $google-blue 20%, transparent), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
       transform: translateY(-2px);
     }
 
     &-active {
       border-color: $google-blue;
-      background-color: rgba($google-blue, 0.02);
+      background-color: color-mix(in srgb, $google-blue 2%, transparent);
     }
 
     .month-icon {
@@ -48,7 +48,7 @@
       .month-number {
         font-size: 18px;
         font-weight: 500;
-        color: white;
+        color: $google-on-accent;
       }
     }
 

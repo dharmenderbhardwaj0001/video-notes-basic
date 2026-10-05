@@ -1,21 +1,27 @@
 // Google Apps Theme
-// Colors matching Google's Material Design
+// Colors matching Google's Material Design.
+//
+// The palette lives in CSS custom properties defined in src/styles.css
+// (--google-*), which are overridden per theme via [data-theme="..."]
+// selectors on <html>. The SCSS variables below just forward those
+// properties, so every component styled with $google-* automatically
+// follows the active theme.
 
-@use 'sass:color';
-
-$google-blue: #1a73e8;
-$google-red: #d93025;
-$google-yellow: #fbbc05;
-$google-green: #188038;
-$google-grey: #f1f3f4;
-$google-dark-grey: #5f6368;
-$google-light-grey: #e0e0e0;
-$google-white: #ffffff;
-$google-text: #202124;
-$google-text-secondary: #5f6368;
-$google-border: #dadce0;
-$google-hover: rgba(0, 0, 0, 0.04);
-$google-active: rgba(0, 0, 0, 0.1);
+$google-blue: var(--google-blue);
+$google-red: var(--google-red);
+$google-yellow: var(--google-yellow);
+$google-green: var(--google-green);
+$google-grey: var(--google-grey);
+$google-dark-grey: var(--google-dark-grey);
+$google-light-grey: var(--google-light-grey);
+$google-white: var(--google-white);
+$google-text: var(--google-text);
+$google-text-secondary: var(--google-text-secondary);
+$google-border: var(--google-border);
+$google-hover: var(--google-hover);
+$google-active: var(--google-active);
+// Text/icon color on top of an accent-colored background.
+$google-on-accent: var(--google-on-accent);
 
 // Google Font
 $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
@@ -65,13 +71,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
     .logo-icon {
       width: 32px;
       height: 32px;
-      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #d946ef 65%, #ec4899 100%);
       border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
     }
   }
 
@@ -100,7 +100,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
       height: 32px;
       border-radius: 50%;
       background-color: $google-blue;
-      color: white;
+      color: $google-on-accent;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -187,13 +187,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
   .logo-icon {
     width: 32px;
     height: 32px;
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #d946ef 65%, #ec4899 100%);
     border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
   }
 
   .app-title {
@@ -221,7 +215,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
       height: 32px;
       border-radius: 50%;
       background-color: $google-blue;
-      color: white;
+      color: $google-on-accent;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -263,7 +257,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 // Google buttons
 .google-btn {
   background-color: $google-blue;
-  color: white;
+  color: $google-on-accent;
   border: none;
   border-radius: 4px;
   padding: 8px 16px;
@@ -274,12 +268,12 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
   margin: 4px;
 
   &:hover {
-    background-color: color.adjust($google-blue, $lightness: -5%);
+    background-color: color-mix(in srgb, $google-blue 92%, #000);
     box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
   }
 
   &:active {
-    background-color: color.adjust($google-blue, $lightness: -10%);
+    background-color: color-mix(in srgb, $google-blue 84%, #000);
   }
 
   &-secondary {
@@ -288,7 +282,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
     border: 1px solid $google-blue;
 
     &:hover {
-      background-color: rgba($google-blue, 0.04);
+      background-color: color-mix(in srgb, $google-blue 4%, transparent);
     }
   }
 
@@ -311,10 +305,10 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 
   &-danger {
     background-color: $google-red;
-    color: white;
+    color: $google-on-accent;
 
     &:hover {
-      background-color: color.adjust($google-red, $lightness: -5%);
+      background-color: color-mix(in srgb, $google-red 92%, #000);
     }
   }
 }
@@ -333,7 +327,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
   &:focus {
     outline: none;
     border-color: $google-blue;
-    box-shadow: 0 0 0 2px rgba($google-blue, 0.2);
+    box-shadow: 0 0 0 2px color-mix(in srgb, $google-blue 20%, transparent);
   }
 
   &::placeholder {
@@ -385,10 +379,10 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 
     &-active {
       background-color: $google-blue;
-      color: white;
+      color: $google-on-accent;
 
       &:hover {
-        background-color: color.adjust($google-blue, $lightness: -5%);
+        background-color: color-mix(in srgb, $google-blue 92%, #000);
       }
     }
 
@@ -467,7 +461,7 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 
     &:hover {
       border-color: $google-blue;
-      box-shadow: 0 1px 2px 0 rgba($google-blue, 0.1);
+      box-shadow: 0 1px 2px 0 color-mix(in srgb, $google-blue 10%, transparent);
     }
 
     .grid-icon {

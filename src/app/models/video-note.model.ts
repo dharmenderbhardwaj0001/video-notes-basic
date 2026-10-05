@@ -17,6 +17,20 @@ export interface DayData {
   videos: VideoNote[];
 }
 
+// A video note ranked in the "Top Videos" list, carrying the calendar
+// day it was last watched on so the UI can link to that day's page.
+export interface TopVideoNote extends VideoNote {
+  watchDay: { year: number; month: number; day: number };
+}
+
+// One saved watch entry of a video in its history: the note as stored
+// on the given day.
+export interface VideoHistoryEntry {
+  video: VideoNote;
+  day: { year: number; month: number; day: number };
+  date: Date;
+}
+
 export interface MonthData {
   month: number;
   year: number;
@@ -124,6 +138,25 @@ export function getVideoThumbnail(idOrSeed: string | undefined | null): string {
   }
   const index = (Math.abs(hash) % THUMBNAIL_COUNT) + 1;
   return `assets/thumbnails/thumb-${index}.svg`;
+}
+
+// Helper to get the real thumbnail of a YouTube video from any YouTube
+// link (youtu.be/ID, watch?v=ID, shorts/embed/live/ID). Returns null when
+// the URL is not a YouTube video, so callers can fall back to the
+// bundled placeholder thumbnails.
+export function getYouTubeThumbnailUrl(url: string | undefined | null): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  const patterns = [
+    /youtu\.be\/([\w-]{11})/,
+    /[?&]v=([\w-]{11})/,
+    /youtube\.com\/(?:shorts|embed|live|v)\/([\w-]{11})/
+  ];
+  for (const pattern of patterns) {
+    const match = trimmed.match(pattern);
+    if (match) return `https://i.ytimg.com/vi/${match[1]}/hqdefault.jpg`;
+  }
+  return null;
 }
 
 // Helper to get progress message

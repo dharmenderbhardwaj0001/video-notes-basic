@@ -26,18 +26,18 @@
 
     &:hover {
       border-color: $google-blue;
-      box-shadow: 0 1px 4px 0 rgba($google-blue, 0.2), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: 0 1px 4px 0 color-mix(in srgb, $google-blue 20%, transparent), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
       transform: translateY(-2px);
     }
 
     &-active {
       border-color: $google-blue;
-      background-color: rgba($google-blue, 0.02);
+      background-color: color-mix(in srgb, $google-blue 2%, transparent);
     }
 
     &-today {
       border-color: $google-green;
-      background-color: rgba($google-green, 0.05);
+      background-color: color-mix(in srgb, $google-green 5%, transparent);
     }
 
     .day-icon {
@@ -54,13 +54,13 @@
       .day-number {
         font-size: 16px;
         font-weight: 600;
-        color: white;
+        color: $google-on-accent;
         line-height: 1;
       }
 
       .day-suffix {
         font-size: 10px;
-        color: white;
+        color: $google-on-accent;
         opacity: 0.8;
       }
     }

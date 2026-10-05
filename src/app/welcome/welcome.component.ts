@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { StorageService } from '../storage.service';
-import { ProgressStats, MotivationMessage, formatDuration, WeeklyProgress, DailyProgress } from '../models/video-note.model';
+import { ProgressStats, MotivationMessage, formatDuration, WeeklyProgress, DailyProgress, VideoNote, TopVideoNote, getVideoThumbnail, getYouTubeThumbnailUrl } from '../models/video-note.model';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 
@@ -23,6 +23,7 @@ export class WelcomeComponent implements OnInit {
   progressStats: ProgressStats | null = null;
   motivationMessages: MotivationMessage[] = [];
   activeMessageIndex: number = 0;
+  topVideos: TopVideoNote[] = [];
 
   // Circle progress for today
   circleProgress: number = 283; // 2 * π * 45
@@ -64,6 +65,7 @@ export class WelcomeComponent implements OnInit {
   private loadProgressStats(): void {
     this.progressStats = this.storage.getProgressStats();
     this.motivationMessages = this.storage.getMotivationMessages();
+    this.topVideos = this.storage.getTopVideos(10);
     this.activeMessageIndex = 0;
     
     // Update circle progress for today
@@ -121,6 +123,23 @@ export class WelcomeComponent implements OnInit {
 
   formatDuration(seconds: number): string {
     return formatDuration(seconds);
+  }
+
+  // Real YouTube thumbnail when the video has a YouTube URL, else the
+  // bundled placeholder thumbnail.
+  getThumbnail(video: VideoNote): string {
+    return getYouTubeThumbnailUrl(video.videoUrl)
+      ?? getVideoThumbnail(video.id || video.videoUrl || video.videoTitle);
+  }
+
+  // Opens the day page of the day this video was last watched on.
+  navigateToVideoDay(video: TopVideoNote): void {
+    if (!video.watchDay) return;
+    this.router.navigate([
+      '/year', video.watchDay.year,
+      'month', video.watchDay.month,
+      'day', video.watchDay.day
+    ]);
   }
 
   nextMessage(): void {

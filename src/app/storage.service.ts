@@ -5,7 +5,8 @@ import { FileStorageService } from './file-storage.service';
 import { 
   VideoNote, DayData, MonthData, YearData, generateId, getDateKey, 
   calculateTimeWatched, formatDuration, DailyProgress, ProgressStats, 
-  WeeklyProgress, MotivationMessage, getProgressMessage
+  WeeklyProgress, MotivationMessage, getProgressMessage, TopVideoNote,
+  VideoHistoryEntry
 } from './models/video-note.model';
 
 @Injectable({
@@ -367,6 +368,79 @@ export class StorageService {
   getAllYears(): number[] {
     const data = this.getAllData();
     return data.map(y => y.year).sort((a, b) => b - a); // Sort descending
+  }
+
+  // Most-watched videos across all days, aggregated per video (same URL,
+  // or same title when there is no URL) and sorted by total time watched.
+  // Each entry carries the day it was last watched on. Used by the
+  // "Top Videos" card on the home page.
+  getTopVideos(limit: number = 10): TopVideoNote[] {
+    const watchTime = (v: VideoNote): number =>
+      (v.durationWatched ?? v.position ?? 0);
+    const watchDayOf = (dayDate: Date): { year: number; month: number; day: number } => {
+      const d = new Date(dayDate);
+      return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
+    };
+
+    const groups = new Map<string, TopVideoNote>();
+    for (const yearData of this.getAllData()) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          for (const video of dayData.videos) {
+            const key = (video.videoUrl || video.videoTitle || video.id).trim();
+            const watchDay = watchDayOf(dayData.date);
+            const existing = groups.get(key);
+            if (!existing) {
+              groups.set(key, { ...video, durationWatched: watchTime(video), watchDay });
+            } else {
+              existing.durationWatched = (existing.durationWatched || 0) + watchTime(video);
+              existing.position = Math.max(existing.position || 0, video.position || 0);
+              if ((video.updatedAt || '') > (existing.updatedAt || '')) {
+                existing.updatedAt = video.updatedAt;
+                existing.watchDay = watchDay;
+              }
+            }
+          }
+        }
+      }
+    }
+    return Array.from(groups.values())
+      .sort((a, b) => (b.durationWatched || 0) - (a.durationWatched || 0))
+      .slice(0, limit);
+  }
+
+  // Full watch history of one video: every saved entry of the same video
+  // (matched by URL, or by title when there is no URL) across all days,
+  // sorted oldest to newest. Empty when the id is unknown.
+  getVideoHistory(videoId: string): VideoHistoryEntry[] {
+    const keyOf = (v: VideoNote): string =>
+      (v.videoUrl || v.videoTitle || v.id).trim();
+    const dayOf = (dayDate: Date): { year: number; month: number; day: number } => {
+      const d = new Date(dayDate);
+      return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
+    };
+
+    const entries: VideoHistoryEntry[] = [];
+    let key: string | null = null;
+    for (const yearData of this.getAllData()) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          for (const video of dayData.videos) {
+            if (key === null && video.id === videoId) {
+              key = keyOf(video);
+            }
+            if (key !== null && keyOf(video) === key) {
+              entries.push({ video, day: dayOf(dayData.date), date: new Date(dayData.date) });
+            }
+          }
+        }
+      }
+    }
+    if (key === null) return [];
+    return entries.sort((a, b) =>
+      a.date.getTime() - b.date.getTime() ||
+      String(a.video.updatedAt || '').localeCompare(String(b.video.updatedAt || ''))
+    );
   }
 
   // Get all months for a year

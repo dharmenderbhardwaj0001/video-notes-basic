@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../storage.service';
-import { VideoNote, getVideoThumbnail } from '../models/video-note.model';
+import { VideoNote, getVideoThumbnail, getYouTubeThumbnailUrl } from '../models/video-note.model';
 import { Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -128,9 +128,11 @@ export class VideoDetailComponent implements OnInit, OnDestroy {
     return this.colors[Math.abs(hash) % this.colors.length];
   }
 
-  // Thumbnail for the current video (used when the video has no title)
+  // Real YouTube thumbnail when the video has a YouTube URL, else the
+  // bundled placeholder thumbnail.
   getThumbnail(): string {
-    return getVideoThumbnail(this.video?.id || this.video?.videoUrl || this.video?.videoTitle);
+    return getYouTubeThumbnailUrl(this.video?.videoUrl)
+      ?? getVideoThumbnail(this.video?.id || this.video?.videoUrl || this.video?.videoTitle);
   }
 
   getShortUrl(url: string | undefined): string {

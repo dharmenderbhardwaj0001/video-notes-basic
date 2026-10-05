@@ -23,14 +23,9 @@
     width: 32px;
     height: 32px;
     border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    // Violet → purple → pink shades mix
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #d946ef 65%, #ec4899 100%);
-    box-shadow: 0 1px 3px rgba(124, 58, 237, 0.4);
+    display: block;
+    // Same 3D light-blue/gold mark as the tab favicon (public/favicon.svg)
+    filter: drop-shadow(0 2px 3px rgba(3, 105, 161, 0.4));
   }
 
   .app-title {
@@ -70,5 +65,88 @@
   &.storage-btn-connected {
     color: #1e8e3e;
     border-color: #1e8e3e;
+  }
+}
+
+// Theme picker (palette icon in the navbar)
+.theme-picker {
+  position: relative;
+
+  .theme-popup {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 220px;
+    background-color: $google-white;
+    border: 1px solid $google-border;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.2), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+    z-index: 1100;
+    padding: 12px;
+  }
+
+  .theme-popup-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: $google-text-secondary;
+    margin-bottom: 8px;
+  }
+
+  .theme-popup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .theme-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      background-color: $google-hover;
+    }
+
+    &.theme-option-active {
+      background-color: color-mix(in srgb, $google-blue 10%, transparent);
+    }
+  }
+
+  .theme-swatches {
+    display: flex;
+    flex-shrink: 0;
+
+    .swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid $google-border;
+      margin-left: -4px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .theme-option-name {
+    flex: 1;
+    font-size: 13px;
+    color: $google-text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .theme-option-check {
+    color: $google-blue;
+    flex-shrink: 0;
   }
 }

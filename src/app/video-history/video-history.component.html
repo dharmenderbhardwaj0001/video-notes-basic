@@ -1,0 +1,59 @@
+<div class="page-container">
+  <app-header></app-header>
+
+  <div class="page-content">
+    <div class="history-container">
+      <div class="breadcrumb">
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goHome()">Home</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span>Watch History</span>
+        </div>
+      </div>
+
+      <!-- Not found -->
+      <div class="empty-state" *ngIf="!latestVideo">
+        <h3>Video not found</h3>
+        <p>No saved video matches this link.</p>
+      </div>
+
+      <ng-container *ngIf="latestVideo">
+        <!-- Video summary -->
+        <div class="history-header">
+          <img class="history-thumb" [src]="getThumbnail()" [alt]="latestVideo.videoTitle || 'Video thumbnail'" />
+          <div class="history-info">
+            <h2 class="page-title">{{ latestVideo.videoTitle || 'Untitled Video' }}</h2>
+            <p class="history-url">{{ latestVideo.videoUrl || 'No URL' }}</p>
+            <p class="history-summary">
+              {{ entries.length }} session{{ entries.length !== 1 ? 's' : '' }}
+              &bull; {{ formatDuration(getTotalWatchTime()) }} watched
+              &bull; Watched till {{ formatDuration(getLatestPosition()) }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="history-timeline">
+          <div class="history-entry" *ngFor="let entry of entries" (click)="navigateToDay(entry)" title="Open this day">
+            <div class="entry-marker"></div>
+            <div class="entry-card">
+              <div class="entry-date">
+                <span class="entry-date-day">{{ getDateLabel(entry) }}</span>
+                <span class="entry-date-time" *ngIf="entry.video.timestamp">saved {{ getTimeOfDay(entry.video.timestamp) }}</span>
+              </div>
+              <div class="entry-details">
+                <span class="entry-detail">Watched till {{ formatDuration(entry.video.position || 0) }}</span>
+                <span class="entry-detail" *ngIf="(entry.video.durationWatched || 0) > 0">
+                  Session {{ formatDuration(entry.video.durationWatched || 0) }}
+                </span>
+              </div>
+              <p class="entry-notes" *ngIf="entry.video.notes">{{ getNotesPreview(entry.video.notes) }}</p>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

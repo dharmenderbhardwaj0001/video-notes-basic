@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# App data (personal notes and settings generated at runtime)
+/notes/video-notes.json
+/notes/user.json
+/notes/theme.json
+*.tmp

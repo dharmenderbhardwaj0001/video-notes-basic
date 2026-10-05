@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../storage.service';
-import { VideoNote, generateId, getVideoThumbnail } from '../models/video-note.model';
+import { VideoNote, generateId, getVideoThumbnail, getYouTubeThumbnailUrl } from '../models/video-note.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -120,9 +120,11 @@ export class DayComponent implements OnInit {
     return this.colors[Math.abs(hash) % this.colors.length];
   }
 
-  // Thumbnail for a video (used when the video has no title)
+  // Real YouTube thumbnail when the video has a YouTube URL, else the
+  // bundled placeholder thumbnail.
   getThumbnail(video: VideoNote): string {
-    return getVideoThumbnail(video.id || video.videoUrl || video.videoTitle);
+    return getYouTubeThumbnailUrl(video.videoUrl)
+      ?? getVideoThumbnail(video.id || video.videoUrl || video.videoTitle);
   }
 
   getShortUrl(url: string): string {
@@ -184,6 +186,11 @@ export class DayComponent implements OnInit {
 
   refreshVideos(): void {
     this.loadVideos();
+  }
+
+  // Opens the watch-history page of this video (all days it was watched).
+  goToVideoHistory(video: VideoNote): void {
+    this.router.navigate(['/video-history', video.id]);
   }
 
   openAddVideoDialog(): void {
