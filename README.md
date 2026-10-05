@@ -4,38 +4,36 @@ A local-first web app for tracking the videos you watch and the notes you take w
 
 Everything runs on your machine. No account, no cloud, no tracking.
 
-## What you can do
+![Video Notes Dashboard](docs/screenshots/home.png)
 
-- **Add videos for any day** — give it a title, a YouTube (or any) URL, and optional notes. If the link is a YouTube video, the app shows the video's real thumbnail everywhere it appears.
-- **Track watch progress** — save the position where you left off (hours / minutes / seconds). Videos you're partway through show a "continue watching" badge and their watched-till time.
-- **Browse your watch history** — videos are grouped by year, month, and day, with stats for each (videos watched, time watched, notes taken).
-- **Today's Progress dashboard** — the home page shows today's total watch time, videos, notes, longest session, this week's chart, and all-time stats.
-- **Top Videos card** — your 10 most-watched videos, ranked by total time, with thumbnails and watch time. Click one to jump to the day you last watched it.
-- **Per-video history page** — every video card has a history icon (clock) that opens a timeline of every day you watched that video, with watched-till positions and session times.
-- **Set your name** — click the avatar in the header; the app greets you with it.
-- **Pick a theme** — the palette icon in the header opens a theme picker with 12 themes (Light, Dark, Midnight, Forest, Coffee, Nord, Ocean, Sunset, Rose, Violet, Slate, Sepia). The whole UI follows the chosen theme and it is remembered between sessions.
+## Features
 
-## Screenshots — how to use the app
+- 🔒 **100% local-first** — no account, cloud, or tracking
+- 🎥 **Video tracking** — YouTube and arbitrary video URLs, with real YouTube thumbnails
+- 📝 **Notes** — save notes alongside videos
+- ⏱️ **Watch progress** — resume from where you stopped
+- 📊 **Watch statistics** — daily, weekly, and all-time stats
+- 🏆 **Top Videos** — leaderboard of your most-watched videos
+- 📅 **Calendar history** — year → month → day navigation
+- 🕐 **Per-video history** — track every session for a video
+- 🎨 **12 themes** — Light, Dark, Midnight, Forest, Coffee, Nord, and more
 
-**Home dashboard** — start here after `npm start`. See today's progress circle, the week's chart, all-time stats, and the **Top Videos** card on the right. Click any video in Top Videos to jump to the day you last watched it. The palette icon in the header opens the theme picker.
+## Screenshots
 
-![Home dashboard with Today's Progress, weekly chart, all-time stats and the Top Videos card](docs/screenshots/home.png)
+### Dashboard
+![Dashboard](docs/screenshots/home.png)
 
-**Year view** — every year you've watched videos in appears as a card grid; click a month to drill down.
+### Year View
+![Year View](docs/screenshots/year.png)
 
-![Year view showing the months of 2026 as cards](docs/screenshots/year.png)
+### Month View
+![Month View](docs/screenshots/month.png)
 
-**Month view** — calendar-style overview of the month; days with videos are highlighted. Click a day to open it.
+### Day View
+![Day View](docs/screenshots/day.png)
 
-![Month view with day tiles for October 2026](docs/screenshots/month.png)
-
-**Day view** — all videos watched on that day. Use the **Add Video** button (top right) to add one: fill in the title, YouTube URL, notes, and the position you're at (hours / minutes / seconds). Each card has action buttons on the right — continue watching, watch history (clock icon), edit, and delete.
-
-![Day view listing videos with continue, history, edit and delete actions](docs/screenshots/day.png)
-
-**Watch history** — click the clock icon on any video card to see every day you watched that video, with watched-till positions, session lengths, and saved notes. Click an entry to open that day.
-
-![Watch history timeline for one video](docs/screenshots/history.png)
+### Watch History
+![Watch History](docs/screenshots/history.png)
 
 ## Getting started
 
@@ -82,3 +80,7 @@ notes/
 - [Angular 19](https://angular.dev/) (standalone components)
 - Zero-dependency Node.js persistence API (`server.js`)
 - SCSS with a CSS-variable theme system
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
