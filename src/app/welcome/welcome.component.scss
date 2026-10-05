@@ -49,15 +49,18 @@
     padding: 12px 16px;
     background-color: $google-white;
     border: 1px solid $google-border;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     cursor: pointer;
     text-align: left;
     transition: all 0.2s;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
     &:hover {
       border-color: $google-blue;
-      box-shadow: 0 1px 4px 0 color-mix(in srgb, $google-blue 20%, transparent), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, $google-blue 30%, transparent);
       transform: translateY(-2px);
     }
 
@@ -127,9 +130,10 @@
   .progress-card {
     background-color: $google-white;
     border: 1px solid $google-border;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 20px;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
     &.featured {
       grid-area: today;
@@ -375,12 +379,12 @@
           gap: 12px;
           padding: 8px;
           background-color: color-mix(in srgb, $google-blue 5%, transparent);
-          border-radius: 8px;
+          border-radius: var(--radius-md);
 
           .stat-icon {
             width: 32px;
             height: 32px;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -436,10 +440,11 @@
 .motivation-section {
   background-color: $google-white;
   border: 1px solid $google-border;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 24px;
   margin-bottom: 32px;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+  box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
   h3 {
     font-size: 18px;
@@ -455,7 +460,7 @@
     .motivation-card {
       display: none;
       background-color: color-mix(in srgb, $google-blue 2%, transparent);
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       padding: 20px;
       border: 1px solid color-mix(in srgb, $google-blue 10%, transparent);
 
@@ -575,17 +580,20 @@
   .option-card {
     background-color: $google-white;
     border: 1px solid $google-border;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 24px;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     gap: 16px;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
     &:hover {
       border-color: $google-blue;
-      box-shadow: 0 1px 4px 0 color-mix(in srgb, $google-blue 20%, transparent), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, $google-blue 30%, transparent);
       transform: translateY(-2px);
     }
 
@@ -647,10 +655,11 @@
 .weekly-breakdown-section {
   background-color: $google-white;
   border: 1px solid $google-border;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 24px;
   margin-bottom: 32px;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+  box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
   h3 {
     font-size: 18px;
@@ -714,9 +723,10 @@
 .about-section {
   background-color: $google-white;
   border: 1px solid $google-border;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 24px;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+  box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
   h3 {
     font-size: 18px;

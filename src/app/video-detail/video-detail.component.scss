@@ -48,10 +48,10 @@
     .video-player {
       background-color: $google-white;
       border: 1px solid $google-border;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       overflow: hidden;
       margin-bottom: 24px;
-      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: var(--shadow-sm);
 
       .player-placeholder {
         height: 300px;
@@ -216,9 +216,9 @@
     .player-info {
       background-color: $google-white;
       border: 1px solid $google-border;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       padding: 20px;
-      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: var(--shadow-sm);
 
       h3 {
         font-size: 16px;
@@ -290,9 +290,9 @@
     .notes-content {
       background-color: $google-white;
       border: 1px solid $google-border;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       padding: 20px;
-      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: var(--shadow-sm);
 
       .notes-display {
         .notes-text {
@@ -338,9 +338,9 @@
     .details-grid {
       background-color: $google-white;
       border: 1px solid $google-border;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       padding: 20px;
-      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: var(--shadow-sm);
 
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

@@ -15,18 +15,21 @@
   .day-card {
     background-color: $google-white;
     border: 1px solid $google-border;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 12px 16px;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
     &:hover {
       border-color: $google-blue;
-      box-shadow: 0 1px 4px 0 color-mix(in srgb, $google-blue 20%, transparent), 0 2px 8px 0 rgba(60, 64, 67, 0.1);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, $google-blue 30%, transparent);
       transform: translateY(-2px);
     }
 
@@ -102,9 +105,10 @@
   .stat-card {
     background-color: $google-white;
     border: 1px solid $google-border;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 20px;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
     h4 {
       font-size: 16px;
@@ -150,7 +154,7 @@
     gap: 24px;
     background-color: $google-white;
     border: 1px solid $google-border;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 16px;
 
     button {

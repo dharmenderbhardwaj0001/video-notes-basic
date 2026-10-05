@@ -40,13 +40,18 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 
 // Page header
 .page-header {
-  background-color: $google-white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: color-mix(in srgb, $google-white 88%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid $google-border;
-  padding: 16px 24px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  box-shadow: var(--shadow-xs);
 
   .header-left {
     display: flex;
@@ -155,13 +160,18 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 
 // Google apps header style
 .google-header {
-  background-color: $google-white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: color-mix(in srgb, $google-white 88%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid $google-border;
-  padding: 16px 24px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  box-shadow: var(--shadow-xs);
 
   .header-left {
     display: flex;
@@ -234,11 +244,12 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 // Google cards
 .google-card {
   background-color: $google-white;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid $google-border;
   padding: 24px;
   margin: 16px 0;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1), 0 2px 4px 0 rgba(60, 64, 67, 0.05);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--speed) var(--ease), border-color var(--speed) var(--ease);
 
   .card-header {
     font-size: 20px;
@@ -256,33 +267,45 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 
 // Google buttons
 .google-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background-color: $google-blue;
   color: $google-on-accent;
   border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
   font-size: 14px;
   font-weight: 500;
+  line-height: 20px;
   cursor: pointer;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  transition: background-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease);
   margin: 4px;
 
   &:hover {
     background-color: color-mix(in srgb, $google-blue 92%, #000);
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    box-shadow: var(--shadow-sm);
   }
 
   &:active {
     background-color: color-mix(in srgb, $google-blue 84%, #000);
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, $google-blue 40%, transparent);
+    outline-offset: 2px;
   }
 
   &-secondary {
     background-color: $google-white;
     color: $google-blue;
-    border: 1px solid $google-blue;
+    border: 1px solid color-mix(in srgb, $google-blue 40%, transparent);
 
     &:hover {
       background-color: color-mix(in srgb, $google-blue 4%, transparent);
+      border-color: $google-blue;
     }
   }
 
@@ -316,18 +339,19 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 // Google form elements
 .google-input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 1px solid $google-border;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-family: $google-font;
   color: $google-text;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: $google-white;
+  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease), background-color var(--speed) var(--ease);
 
   &:focus {
     outline: none;
     border-color: $google-blue;
-    box-shadow: 0 0 0 2px color-mix(in srgb, $google-blue 20%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, $google-blue 18%, transparent);
   }
 
   &::placeholder {
@@ -490,11 +514,14 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: color-mix(in srgb, #000 45%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: dialogFadeIn 0.18s var(--ease);
 
   .dialog-overlay {
     position: absolute;
@@ -506,13 +533,15 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
 
   .dialog-content {
     background-color: $google-white;
-    border-radius: 8px;
-    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.2), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-lg);
+    border: 1px solid $google-border;
+    box-shadow: var(--shadow-lg);
     max-width: 600px;
     width: 90%;
     max-height: 90vh;
     overflow: auto;
     position: relative;
+    animation: dialogScaleIn 0.22s var(--ease);
 
     .dialog-header {
       padding: 20px 24px;
@@ -561,6 +590,26 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
   }
 }
 
+@keyframes dialogFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogScaleIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 // Google notifications
 .google-notification {
   position: fixed;
@@ -569,11 +618,11 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
   background-color: $google-text;
   color: $google-white;
   padding: 12px 24px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
   z-index: 1001;
-  animation: slideIn 0.3s ease;
+  animation: slideIn 0.3s var(--ease);
 
   &-success {
     background-color: $google-green;
