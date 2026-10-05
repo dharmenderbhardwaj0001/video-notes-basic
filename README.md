@@ -20,9 +20,6 @@ Everything runs on your machine. No account, no cloud, no tracking.
 
 ## Screenshots
 
-### Landing Page
-![Landing Page](docs/screenshots/landing.png)
-
 ### Themes
 
 | Light | Dark |
