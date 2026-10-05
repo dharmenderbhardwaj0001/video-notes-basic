@@ -119,7 +119,7 @@ export class MonthComponent implements OnInit {
   }
 
   goHome(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 
   goToYear(): void {

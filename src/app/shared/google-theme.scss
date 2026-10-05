@@ -730,3 +730,74 @@ $google-font: 'Roboto', 'Google Sans', Arial, sans-serif;
     white-space: nowrap;
   }
 }
+// ---------------------------------------------------------------------------
+// Responsive rules
+// ---------------------------------------------------------------------------
+
+// Large screens (2K-class): widen the content column instead of huge margins
+@media (min-width: 1600px) {
+  .welcome-container,
+  .day-container,
+  .month-container,
+  .year-container,
+  .video-detail-container,
+  .history-container,
+  .main-container {
+    max-width: 1440px;
+  }
+}
+
+// Ultra-large screens (4K)
+@media (min-width: 2200px) {
+  .welcome-container,
+  .day-container,
+  .month-container,
+  .year-container,
+  .video-detail-container,
+  .history-container,
+  .main-container {
+    max-width: 1760px;
+  }
+}
+
+// Tablets: keep the header compact, drop the greeting text
+@media (max-width: 768px) {
+  .page-header {
+    padding: 10px 16px;
+
+    .app-title {
+      font-size: 18px;
+    }
+
+    .user-info {
+      padding: 6px;
+
+      > span {
+        display: none;
+      }
+    }
+  }
+}
+
+// Phones: header reduces to icon + actions
+@media (max-width: 480px) {
+  .page-header {
+    padding: 8px 12px;
+    gap: 8px;
+
+    .app-title {
+      display: none;
+    }
+
+    .header-left,
+    .header-right {
+      width: auto;
+      gap: 8px;
+    }
+
+    .google-btn {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  }
+}

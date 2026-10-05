@@ -93,10 +93,10 @@ export class YearComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 
   goHome(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 }

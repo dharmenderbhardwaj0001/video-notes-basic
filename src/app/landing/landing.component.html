@@ -1,0 +1,242 @@
+<div class="landing">
+
+  <!-- ===== Top navigation ===== -->
+  <nav class="landing-nav">
+    <div class="nav-inner">
+      <div class="landing-logo">
+        <img src="favicon.svg" alt="Video Notes logo" />
+        <span>Video Notes</span>
+      </div>
+      <div class="nav-right">
+        <a class="nav-link" (click)="scrollToFeatures()">Features</a>
+        <button class="btn-primary btn-sm" (click)="goToDashboard()">
+          Go to Dashboard
+          <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <header class="hero">
+    <div class="hero-bg">
+      <div class="aurora aurora-blue"></div>
+      <div class="aurora aurora-gold"></div>
+      <div class="hero-gridlines"></div>
+      <div class="grain"></div>
+    </div>
+
+    <div class="hero-inner">
+      <span class="badge">
+        <span class="badge-dot"></span>
+        100% local-first &middot; no account &middot; no tracking
+      </span>
+
+      <h1>Watch smarter.<br/><span class="grad">Remember everything.</span></h1>
+
+      <p class="hero-sub">
+        Video Notes is a local-first tracker for the videos you learn from &mdash;
+        progress, notes, statistics, and a history of every session.
+        All of it stays on your PC.
+      </p>
+
+      <div class="cta-row">
+        <button class="btn-primary btn-lg" (click)="goToDashboard()">
+          Go to Dashboard
+          <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor"/>
+          </svg>
+        </button>
+        <button class="btn-ghost" (click)="scrollToFeatures()">Explore features</button>
+      </div>
+
+      <!-- Real dashboard inside a floating browser mock -->
+      <div class="hero-mock-stage">
+        <div class="hero-mock"
+             (mousemove)="onMockMove($event)"
+             (mouseleave)="resetTilt()"
+             [style.transform]="'perspective(1200px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg)'">
+          <div class="mock-chrome">
+            <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+            <span class="mock-url">localhost:4200/dashboard</span>
+          </div>
+          <img class="mock-shot" src="assets/hero-dashboard.png" alt="Video Notes dashboard" />
+        </div>
+        <div class="float-chip chip-1">
+          <span class="chip-icon">&#9201;&#65039;</span>
+          <div><strong>Watched till 26m 58s</strong><span>python ai &middot; Oct 5</span></div>
+        </div>
+        <div class="float-chip chip-2">
+          <span class="chip-icon">&#127942;</span>
+          <div><strong>#1 Most watched</strong><span>33h total</span></div>
+        </div>
+        <div class="float-chip chip-3">
+          <span class="chip-icon">&#128293;</span>
+          <div><strong>5-day streak</strong><span>keep it going</span></div>
+        </div>
+      </div>
+
+      <div class="hero-strip">
+        <div class="strip-item"><strong>1</strong><span>command to start</span></div>
+        <div class="strip-item"><strong>100%</strong><span>on your PC</span></div>
+        <div class="strip-item"><strong>12</strong><span>themes</span></div>
+        <div class="strip-item"><strong>0</strong><span>accounts needed</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Features bento ===== -->
+  <section class="section features" id="features">
+    <div class="section-inner reveal" #reveal>
+      <span class="eyebrow">Features</span>
+      <h2>Built for people who learn from videos</h2>
+      <p class="section-sub">Every feature works offline, on your machine.</p>
+
+      <div class="bento">
+        <article class="cell cell-wide">
+          <div class="cell-visual play-visual">
+            <div class="play-tile">
+              <svg xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 0 24 24" width="40">
+                <path d="M8 5v14l11-7z" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="play-meta">
+              <strong>python ai</strong>
+              <span>youtu.be/ygXn5nV5qFc</span>
+            </div>
+          </div>
+          <h3>Video tracking</h3>
+          <p>YouTube and arbitrary video URLs, with the video's real thumbnail picked up automatically.</p>
+        </article>
+
+        <article class="cell">
+          <div class="cell-visual ring-visual">
+            <svg viewBox="0 0 100 100" class="ring">
+              <circle cx="50" cy="50" r="42" class="ring-track"/>
+              <circle cx="50" cy="50" r="42" class="ring-fill" stroke-dasharray="264" stroke-dashoffset="72"/>
+            </svg>
+            <div class="ring-label"><strong>73%</strong><span>of today</span></div>
+          </div>
+          <h3>Watch progress</h3>
+          <p>Resume any video from exactly where you stopped.</p>
+        </article>
+
+        <article class="cell">
+          <div class="cell-visual swatch-visual">
+            <span class="swatch" *ngFor="let color of themeSwatches" [style.background-color]="color"></span>
+          </div>
+          <h3>12 themes</h3>
+          <p>Light, Dark, Midnight, Forest, Coffee, Nord and more &mdash; saved with your data.</p>
+        </article>
+
+        <article class="cell">
+          <div class="cell-visual bars-visual">
+            <span class="bar" style="height: 35%"></span>
+            <span class="bar" style="height: 60%"></span>
+            <span class="bar bar-hot" style="height: 95%"></span>
+            <span class="bar" style="height: 45%"></span>
+            <span class="bar" style="height: 70%"></span>
+            <span class="bar" style="height: 25%"></span>
+            <span class="bar" style="height: 55%"></span>
+          </div>
+          <h3>Watch statistics</h3>
+          <p>Daily, weekly and all-time stats with streaks and best-day records.</p>
+        </article>
+
+        <article class="cell">
+          <div class="cell-visual top-visual">
+            <div class="top-row"><span class="top-rank">1</span><span class="top-bar" style="width: 92%"></span></div>
+            <div class="top-row"><span class="top-rank">2</span><span class="top-bar" style="width: 58%"></span></div>
+            <div class="top-row"><span class="top-rank">3</span><span class="top-bar" style="width: 31%"></span></div>
+          </div>
+          <h3>Top Videos</h3>
+          <p>A leaderboard of your most-watched videos, one click from any day.</p>
+        </article>
+
+        <article class="cell cell-wide">
+          <div class="cell-visual tree-visual">
+            <div class="tree">
+              <span class="tree-line">notes/</span>
+              <span class="tree-line tree-child">&#9500;&#65042; video-notes.json <em>&mdash; every note, one line per day</em></span>
+              <span class="tree-line tree-child">&#9500;&#65042; user.json <em>&mdash; your name</em></span>
+              <span class="tree-line tree-child">&#9492;&#65042; theme.json <em>&mdash; your theme</em></span>
+            </div>
+          </div>
+          <h3>100% local-first</h3>
+          <p>Plain JSON files next to the app, written atomically on every save. Readable in any editor, never uploaded anywhere.</p>
+        </article>
+
+        <article class="cell">
+          <div class="cell-visual notes-visual">
+            <span class="note-line" style="width: 88%"></span>
+            <span class="note-line" style="width: 96%"></span>
+            <span class="note-line" style="width: 62%"></span>
+            <span class="note-line note-accent" style="width: 74%"></span>
+          </div>
+          <h3>Notes &amp; history</h3>
+          <p>Notes beside every video, plus a per-video timeline of every session.</p>
+        </article>
+
+        <article class="cell">
+          <div class="cell-visual cal-visual">
+            <span class="cal-day cal-on">1</span><span class="cal-day">2</span><span class="cal-day">3</span>
+            <span class="cal-day cal-on">4</span><span class="cal-day cal-on">5</span><span class="cal-day">6</span>
+            <span class="cal-day">7</span><span class="cal-day cal-hot">8</span><span class="cal-day">9</span>
+          </div>
+          <h3>Calendar history</h3>
+          <p>Year, month and day navigation across your whole journey.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== How it works ===== -->
+  <section class="section steps">
+    <div class="section-inner reveal" #reveal>
+      <span class="eyebrow">How it works</span>
+      <h2>Up and running in a minute</h2>
+      <div class="step-grid">
+        <div class="step" *ngFor="let step of steps; let i = index">
+          <span class="step-number">{{ i + 1 }}</span>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.text }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Final CTA band ===== -->
+  <section class="cta-band">
+    <div class="cta-band-bg">
+      <div class="aurora aurora-blue"></div>
+      <div class="aurora aurora-gold"></div>
+      <div class="grain"></div>
+    </div>
+    <div class="cta-band-inner reveal" #reveal>
+      <h2>Your videos. Your notes. Your machine.</h2>
+      <p>No sign-up, no cloud, no lock-in. Open the dashboard and start tracking.</p>
+      <button class="btn-primary btn-lg" (click)="goToDashboard()">
+        Go to Dashboard
+        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+          <path d="M0 0h24v24H0V0z" fill="none"/>
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="landing-footer">
+    <div class="footer-inner">
+      <div class="landing-logo">
+        <img src="favicon.svg" alt="Video Notes logo" />
+        <span>Video Notes</span>
+      </div>
+      <span class="footer-note">A local-first watch tracker &middot; MIT License</span>
+    </div>
+  </footer>
+</div>

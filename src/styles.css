@@ -246,6 +246,44 @@ body,
   --google-on-accent: #ffffff;
 }
 
+/* Colors from public/favicon.svg: sky-blue tile gradient with golden "V" accent */
+[data-theme='favicon'] {
+  --google-blue: #0369a1;
+  --google-blue-light: #38bdf8;
+  --google-red: #c2410c;
+  --google-yellow: #f7c14b;
+  --google-green: #15803d;
+  --google-grey: #e0f2fc;
+  --google-dark-grey: #3b6f8f;
+  --google-light-grey: #bae6fd;
+  --google-white: #ffffff;
+  --google-text: #0c2d3f;
+  --google-text-secondary: #35648a;
+  --google-border: #b3e0f7;
+  --google-hover: rgba(247, 193, 75, 0.15);
+  --google-active: rgba(247, 193, 75, 0.28);
+  --google-on-accent: #ffffff;
+}
+
+/* Colors from the landing page: deep navy glass with sky-blue and gold accents */
+[data-theme='landing'] {
+  --google-blue: #38bdf8;
+  --google-blue-light: #7fd4f7;
+  --google-red: #ff5f57;
+  --google-yellow: #f7c14b;
+  --google-green: #28c840;
+  --google-grey: #04121f;
+  --google-dark-grey: #8fb8d4;
+  --google-light-grey: #16344e;
+  --google-white: #0b2e4a;
+  --google-text: #f2f8ff;
+  --google-text-secondary: #a3bcd0;
+  --google-border: #234255;
+  --google-hover: rgba(127, 212, 247, 0.08);
+  --google-active: rgba(127, 212, 247, 0.16);
+  --google-on-accent: #04121f;
+}
+
 /* Reset and Base Styles */
 *, *::before, *::after {
   box-sizing: border-box;

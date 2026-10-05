@@ -274,7 +274,7 @@ export class VideoDetailComponent implements OnInit, OnDestroy {
   }
 
   goHome(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 
   goToYear(): void {

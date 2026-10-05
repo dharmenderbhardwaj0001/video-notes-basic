@@ -52,10 +52,8 @@
     gap: 16px;
     box-shadow: var(--shadow-sm);
     transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
-    transition: all 0.2s;
 
     &:hover {
-      border-color: $google-blue;
       box-shadow: var(--shadow-md);
       transform: translateY(-2px);
       border-color: color-mix(in srgb, $google-blue 30%, transparent);

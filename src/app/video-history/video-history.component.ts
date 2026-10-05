@@ -83,7 +83,7 @@ export class VideoHistoryComponent implements OnInit {
   }
 
   goHome(): void {
-    this.router.navigate(['']);
+    this.router.navigate(['/dashboard']);
   }
 
   private getOrdinalSuffix(day: number): string {

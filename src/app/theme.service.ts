@@ -14,20 +14,12 @@ export interface ThemeOption {
   colors: string[];
 }
 
-/** All themes the app ships with. Palette values live in src/styles.css. */
+/** Themes shown in the picker popup. Palette values live in src/styles.css. */
 export const THEMES: ThemeOption[] = [
   { id: 'light', name: 'Light', dark: false, colors: ['#1a73e8', '#ffffff', '#f1f3f4'] },
   { id: 'dark', name: 'Dark', dark: true, colors: ['#8ab4f8', '#292a2d', '#202124'] },
-  { id: 'midnight', name: 'Midnight', dark: true, colors: ['#5fa8d3', '#16243a', '#0f1b2d'] },
-  { id: 'forest', name: 'Forest', dark: true, colors: ['#66bb8a', '#18261d', '#101a14'] },
-  { id: 'coffee', name: 'Coffee', dark: true, colors: ['#d4a24c', '#282018', '#1c1611'] },
-  { id: 'nord', name: 'Nord', dark: true, colors: ['#88c0d0', '#3b4252', '#2e3440'] },
-  { id: 'ocean', name: 'Ocean', dark: false, colors: ['#0277bd', '#ffffff', '#e7f2f7'] },
-  { id: 'sunset', name: 'Sunset', dark: false, colors: ['#e8590c', '#ffffff', '#fdf2ea'] },
-  { id: 'rose', name: 'Rose', dark: false, colors: ['#d6336c', '#ffffff', '#fdf0f4'] },
-  { id: 'violet', name: 'Violet', dark: false, colors: ['#7c3aed', '#ffffff', '#f5f1fc'] },
-  { id: 'slate', name: 'Slate', dark: false, colors: ['#546e7a', '#ffffff', '#eceff1'] },
-  { id: 'sepia', name: 'Sepia', dark: false, colors: ['#8d6e63', '#fffdf6', '#f4ecd8'] }
+  { id: 'favicon', name: 'Light Version 2', dark: false, colors: ['#0369a1', '#f7c14b', '#e0f2fc'] },
+  { id: 'landing', name: 'Dark Version 2', dark: true, colors: ['#38bdf8', '#0b2e4a', '#04121f'] }
 ];
 
 /**

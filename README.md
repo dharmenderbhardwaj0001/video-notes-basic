@@ -1,10 +1,10 @@
 # Video Notes
 
-A local-first web app for tracking the videos you watch and the notes you take while watching them — organized by year, month, and day, with watch progress, a most-watched leaderboard, per-video watch history, and 12 color themes.
+A local-first web app for tracking the videos you watch and the notes you take while watching them — organized by year, month, and day, with watch progress, a most-watched leaderboard, per-video watch history, and 4 color themes.
 
 Everything runs on your machine. No account, no cloud, no tracking.
 
-![Video Notes Dashboard](docs/screenshots/home.png)
+![Video Notes Landing Page](docs/screenshots/landing.png)
 
 ## Features
 
@@ -16,9 +16,22 @@ Everything runs on your machine. No account, no cloud, no tracking.
 - 🏆 **Top Videos** — leaderboard of your most-watched videos
 - 📅 **Calendar history** — year → month → day navigation
 - 🕐 **Per-video history** — track every session for a video
-- 🎨 **12 themes** — Light, Dark, Midnight, Forest, Coffee, Nord, and more
+- 🎨 **4 themes** — Light, Dark, Light Version 2, and Dark Version 2
 
 ## Screenshots
+
+### Landing Page
+![Landing Page](docs/screenshots/landing.png)
+
+### Themes
+
+| Light | Dark |
+| --- | --- |
+| ![Light theme](docs/screenshots/theme-light.png) | ![Dark theme](docs/screenshots/theme-dark.png) |
+
+| Light Version 2 | Dark Version 2 |
+| --- | --- |
+| ![Light Version 2 theme](docs/screenshots/theme-light-v2.png) | ![Dark Version 2 theme](docs/screenshots/theme-dark-v2.png) |
 
 ### Dashboard
 ![Dashboard](docs/screenshots/home.png)
