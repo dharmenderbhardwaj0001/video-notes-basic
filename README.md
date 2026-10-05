@@ -15,6 +15,28 @@ Everything runs on your machine. No account, no cloud, no tracking.
 - **Set your name** — click the avatar in the header; the app greets you with it.
 - **Pick a theme** — the palette icon in the header opens a theme picker with 12 themes (Light, Dark, Midnight, Forest, Coffee, Nord, Ocean, Sunset, Rose, Violet, Slate, Sepia). The whole UI follows the chosen theme and it is remembered between sessions.
 
+## Screenshots — how to use the app
+
+**Home dashboard** — start here after `npm start`. See today's progress circle, the week's chart, all-time stats, and the **Top Videos** card on the right. Click any video in Top Videos to jump to the day you last watched it. The palette icon in the header opens the theme picker.
+
+![Home dashboard with Today's Progress, weekly chart, all-time stats and the Top Videos card](docs/screenshots/home.png)
+
+**Year view** — every year you've watched videos in appears as a card grid; click a month to drill down.
+
+![Year view showing the months of 2026 as cards](docs/screenshots/year.png)
+
+**Month view** — calendar-style overview of the month; days with videos are highlighted. Click a day to open it.
+
+![Month view with day tiles for October 2026](docs/screenshots/month.png)
+
+**Day view** — all videos watched on that day. Use the **Add Video** button (top right) to add one: fill in the title, YouTube URL, notes, and the position you're at (hours / minutes / seconds). Each card has action buttons on the right — continue watching, watch history (clock icon), edit, and delete.
+
+![Day view listing videos with continue, history, edit and delete actions](docs/screenshots/day.png)
+
+**Watch history** — click the clock icon on any video card to see every day you watched that video, with watched-till positions, session lengths, and saved notes. Click an entry to open that day.
+
+![Watch history timeline for one video](docs/screenshots/history.png)
+
 ## Getting started
 
 Requires [Node.js](https://nodejs.org/) (LTS version recommended).
