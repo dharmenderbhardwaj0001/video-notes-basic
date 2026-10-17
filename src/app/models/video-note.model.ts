@@ -31,6 +31,25 @@ export interface VideoHistoryEntry {
   date: Date;
 }
 
+// Identity of a video across days. Notes are separate records per day, so
+// the same video is matched by its URL, or by its title when there is no URL.
+export function getVideoKey(video: Pick<VideoNote, 'videoUrl' | 'videoTitle' | 'id'> | null | undefined): string {
+  if (!video) return '';
+  return (video.videoUrl || video.videoTitle || video.id || '').trim();
+}
+
+// True when both notes describe the same video. Falls back to the note id
+// for entries without a URL or a title.
+export function isSameVideo(
+  a: Pick<VideoNote, 'videoUrl' | 'videoTitle' | 'id'> | null | undefined,
+  b: Pick<VideoNote, 'videoUrl' | 'videoTitle' | 'id'> | null | undefined
+): boolean {
+  if (!a || !b) return false;
+  if (a.id && b.id && a.id === b.id) return true;
+  const keyA = getVideoKey(a);
+  return keyA.length > 0 && keyA === getVideoKey(b);
+}
+
 export interface MonthData {
   month: number;
   year: number;

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../storage.service';
-import { VideoNote, generateId, getVideoThumbnail, getYouTubeThumbnailUrl } from '../models/video-note.model';
+import { VideoNote, generateId, getVideoThumbnail, getYouTubeThumbnailUrl, isSameVideo } from '../models/video-note.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -189,8 +189,13 @@ export class DayComponent implements OnInit {
   }
 
   // Opens the watch-history page of this video (all days it was watched).
+  // The card may have been built from a note saved on another day, so the
+  // video is matched by URL/title rather than by the card's own id.
   goToVideoHistory(video: VideoNote): void {
-    this.router.navigate(['/video-history', video.id]);
+    const dayVideo = this.videos.find(v => isSameVideo(v, video));
+    if (dayVideo) {
+      this.router.navigate(['/video-history', dayVideo.id]);
+    }
   }
 
   openAddVideoDialog(): void {

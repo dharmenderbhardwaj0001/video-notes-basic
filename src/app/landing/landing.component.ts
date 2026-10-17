@@ -64,8 +64,10 @@ export class LandingComponent implements AfterViewInit {
     this.revealEls.forEach(el => observer.observe(el.nativeElement));
   }
 
+  // The watch data is loaded before the app boots, so the date picker on the
+  // dashboard always has "today" available to scroll to.
   goToDashboard(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/dashboard'], { queryParams: { scrollTo: 'today' } });
   }
 
   scrollToFeatures(): void {

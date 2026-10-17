@@ -21,7 +21,7 @@
       </div>
 
       <!-- Quick Navigation Buttons -->
-      <div class="quick-nav-buttons">
+      <div class="quick-nav-buttons" id="today">
         <button class="quick-nav-btn" (click)="navigateToCurrentYear()" title="Current Year">
           <span class="quick-nav-icon year-icon">
             <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
@@ -124,7 +124,7 @@
             <div class="card-date">Top {{ topVideos.length }} by time watched</div>
           </div>
           <div class="top-videos-list" *ngIf="topVideos.length > 0; else noTopVideos">
-            <div *ngFor="let video of topVideos; let i = index" class="top-video-item" (click)="navigateToVideoDay(video)" title="Open the day this video was last watched">
+            <div *ngFor="let video of topVideos; let i = index" class="top-video-item" (click)="openVideoHistory(video)" title="Open the watch history of this video">
               <span class="top-video-rank">{{ i + 1 }}</span>
               <img class="top-video-thumb" [src]="getThumbnail(video)" [alt]="video.videoTitle || 'Video thumbnail'" loading="lazy" />
               <div class="top-video-info">

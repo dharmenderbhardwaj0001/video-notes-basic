@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../storage.service';
 import { ProgressStats, MotivationMessage, formatDuration, WeeklyProgress, DailyProgress, VideoNote, TopVideoNote, getVideoThumbnail, getYouTubeThumbnailUrl } from '../models/video-note.model';
 import { CommonModule } from '@angular/common';
@@ -34,7 +34,7 @@ export class WelcomeComponent implements OnInit {
   
   private dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  constructor(private router: Router, private storage: StorageService) {}
+  constructor(private router: Router, private storage: StorageService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.loadInitialData();
@@ -42,6 +42,20 @@ export class WelcomeComponent implements OnInit {
     
     // Auto-refresh progress every 30 seconds
     setInterval(() => this.loadProgressStats(), 30000);
+
+    // Coming from the landing page: start at today's entry instead of the
+    // top of the page.
+    this.route.queryParamMap.subscribe(params => {
+      if (params.get('scrollTo') === 'today') {
+        this.scrollToToday();
+      }
+    });
+  }
+
+  private scrollToToday(): void {
+    setTimeout(() => {
+      document.getElementById('today')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   private loadInitialData(): void {
@@ -132,14 +146,11 @@ export class WelcomeComponent implements OnInit {
       ?? getVideoThumbnail(video.id || video.videoUrl || video.videoTitle);
   }
 
-  // Opens the day page of the day this video was last watched on.
-  navigateToVideoDay(video: TopVideoNote): void {
-    if (!video.watchDay) return;
-    this.router.navigate([
-      '/year', video.watchDay.year,
-      'month', video.watchDay.month,
-      'day', video.watchDay.day
-    ]);
+  // Opens the watch-history page of this video (every day it was watched),
+  // where new watch time can be added.
+  openVideoHistory(video: TopVideoNote): void {
+    if (!video.id) return;
+    this.router.navigate(['/video-history', video.id]);
   }
 
   nextMessage(): void {

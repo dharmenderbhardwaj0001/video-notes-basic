@@ -17,8 +17,12 @@ export class HeaderComponent {
   /** Optional primary action (e.g. "Add Video") rendered on the right. */
   @Input() actionLabel: string = '';
   @Input() actionIcon: 'add' | 'save' | 'none' = 'none';
-  /** Emitted when the primary action is clicked. */
+  /** Optional icon-only action rendered on the right (e.g. "Add time"). */
+  @Input() iconActionLabel: string = '';
+  @Input() iconActionIcon: 'add' | 'save' | 'none' = 'none';
+  /** Emitted when an action is clicked. */
   @Input() onAction?: () => void;
+  @Input() onIconAction?: () => void;
 
   showNameDialog: boolean = false;
   draftName: string = '';
@@ -78,6 +82,12 @@ export class HeaderComponent {
   triggerAction(): void {
     if (this.onAction) {
       this.onAction();
+    }
+  }
+
+  triggerIconAction(): void {
+    if (this.onIconAction) {
+      this.onIconAction();
     }
   }
 

@@ -6,7 +6,7 @@ import {
   VideoNote, DayData, MonthData, YearData, generateId, getDateKey, 
   calculateTimeWatched, formatDuration, DailyProgress, ProgressStats, 
   WeeklyProgress, MotivationMessage, getProgressMessage, TopVideoNote,
-  VideoHistoryEntry
+  VideoHistoryEntry, getVideoKey, isSameVideo
 } from './models/video-note.model';
 
 @Injectable({
@@ -387,7 +387,7 @@ export class StorageService {
       for (const monthData of yearData.months) {
         for (const dayData of monthData.days) {
           for (const video of dayData.videos) {
-            const key = (video.videoUrl || video.videoTitle || video.id).trim();
+            const key = getVideoKey(video);
             const watchDay = watchDayOf(dayData.date);
             const existing = groups.get(key);
             if (!existing) {
@@ -413,8 +413,6 @@ export class StorageService {
   // (matched by URL, or by title when there is no URL) across all days,
   // sorted oldest to newest. Empty when the id is unknown.
   getVideoHistory(videoId: string): VideoHistoryEntry[] {
-    const keyOf = (v: VideoNote): string =>
-      (v.videoUrl || v.videoTitle || v.id).trim();
     const dayOf = (dayDate: Date): { year: number; month: number; day: number } => {
       const d = new Date(dayDate);
       return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
@@ -427,9 +425,9 @@ export class StorageService {
         for (const dayData of monthData.days) {
           for (const video of dayData.videos) {
             if (key === null && video.id === videoId) {
-              key = keyOf(video);
+              key = getVideoKey(video);
             }
-            if (key !== null && keyOf(video) === key) {
+            if (key !== null && key.length > 0 && getVideoKey(video) === key) {
               entries.push({ video, day: dayOf(dayData.date), date: new Date(dayData.date) });
             }
           }
@@ -441,6 +439,40 @@ export class StorageService {
       a.date.getTime() - b.date.getTime() ||
       String(a.video.updatedAt || '').localeCompare(String(b.video.updatedAt || ''))
     );
+  }
+
+  // Every saved entry of one video on one calendar day. A video can be
+  // saved more than once a day (e.g. watched in the morning and again at
+  // night), so these are grouped by day on the history page.
+  getVideoEntriesForDay(videoId: string, year: number, month: number, day: number): VideoNote[] {
+    const videos = this.getVideoNotesForDay(year, month, day);
+    const target = videos.find(v => v.id === videoId);
+
+    // Unknown id: fall back to the id itself so a card built from an
+    // aggregated entry still resolves its notes.
+    const reference = target ?? { id: videoId, videoUrl: '', videoTitle: '' };
+
+    return videos
+      .filter(v => isSameVideo(v, reference))
+      .sort((a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime() ||
+        String(a.updatedAt || '').localeCompare(String(b.updatedAt || ''))
+      );
+  }
+
+  // The timestamp of the most recent entry of a video, used to label a
+  // history card with when the video was last watched.
+  getLatestVideoTimestamp(videoId: string): Date | null {
+    const entries = this.getVideoHistory(videoId);
+    if (entries.length === 0) return null;
+
+    const times = entries
+      .map(entry => new Date(entry.video.updatedAt || entry.video.timestamp).getTime())
+      .filter(time => !isNaN(time));
+    const latest = times.length > 0 ? Math.max(...times) : NaN;
+
+    if (!isNaN(latest)) return new Date(latest);
+    return entries[entries.length - 1].date;
   }
 
   // Get all months for a year

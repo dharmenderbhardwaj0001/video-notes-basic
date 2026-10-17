@@ -1,5 +1,9 @@
 <div class="page-container">
-  <app-header></app-header>
+  <app-header
+    iconActionLabel="Add time for today"
+    iconActionIcon="add"
+    [onIconAction]="addTimeAction"
+  ></app-header>
 
   <div class="page-content">
     <div class="history-container">
@@ -25,31 +29,76 @@
           <img class="history-thumb" [src]="getThumbnail()" [alt]="latestVideo.videoTitle || 'Video thumbnail'" />
           <div class="history-info">
             <h2 class="page-title">{{ latestVideo.videoTitle || 'Untitled Video' }}</h2>
-            <p class="history-url">{{ latestVideo.videoUrl || 'No URL' }}</p>
+            <p class="history-url" *ngIf="latestVideo.videoUrl">{{ latestVideo.videoUrl }}</p>
             <p class="history-summary">
-              {{ entries.length }} session{{ entries.length !== 1 ? 's' : '' }}
-              &bull; {{ formatDuration(getTotalWatchTime()) }} watched
-              &bull; Watched till {{ formatDuration(getLatestPosition()) }}
+              {{ days.length }} day{{ days.length !== 1 ? 's' : '' }}
+              &bull; {{ getTotalSaves() }} save{{ getTotalSaves() !== 1 ? 's' : '' }}
+              &bull; {{ formatWatchTime(getTotalWatchTime()) }} watched
+              &bull; Watched till {{ formatWatchTime(getLatestPosition()) }}
             </p>
+          </div>
+          <div class="history-actions">
+            <button class="google-btn" (click)="openAddDialog()">
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+              </svg>
+              Add Time
+            </button>
           </div>
         </div>
 
-        <!-- Timeline -->
+        <!-- Today at a glance -->
+        <div class="today-banner" *ngIf="getTodayWatchTime() > 0">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" fill="currentColor"/>
+          </svg>
+          <span>Watched <strong>{{ formatWatchTime(getTodayWatchTime()) }}</strong> today</span>
+        </div>
+
+        <!-- Day timeline: newest day first -->
         <div class="history-timeline">
-          <div class="history-entry" *ngFor="let entry of entries" (click)="navigateToDay(entry)" title="Open this day">
-            <div class="entry-marker"></div>
-            <div class="entry-card">
-              <div class="entry-date">
-                <span class="entry-date-day">{{ getDateLabel(entry) }}</span>
-                <span class="entry-date-time" *ngIf="entry.video.timestamp">saved {{ getTimeOfDay(entry.video.timestamp) }}</span>
+          <div class="history-day" *ngFor="let group of days">
+            <div class="day-marker"></div>
+            <div class="day-card">
+              <div class="day-header" (click)="goToDay(group)" title="Open this day">
+                <div class="day-date">
+                  <span class="day-badge" *ngIf="group.relativeLabel">{{ group.relativeLabel }}</span>
+                  <span class="day-date-text">{{ group.dateLabel }}</span>
+                </div>
+                <div class="day-stats">
+                  <span class="day-stat">{{ getSavesLabel(group) }}</span>
+                  <span class="day-stat">{{ formatWatchTime(group.totalWatched) }} watched</span>
+                  <span class="day-stat" *ngIf="group.position > 0">till {{ formatWatchTime(group.position) }}</span>
+                  <span class="day-open">Open day</span>
+                </div>
               </div>
-              <div class="entry-details">
-                <span class="entry-detail">Watched till {{ formatDuration(entry.video.position || 0) }}</span>
-                <span class="entry-detail" *ngIf="(entry.video.durationWatched || 0) > 0">
-                  Session {{ formatDuration(entry.video.durationWatched || 0) }}
-                </span>
+
+              <div class="day-entries">
+                <div
+                  class="entry-row"
+                  *ngFor="let entry of group.entries"
+                  (click)="openVideo(group, entry)"
+                  title="Open this video note"
+                >
+                  <span class="entry-time">{{ entry.timeLabel }}</span>
+                  <span class="entry-figures">
+                    <span class="entry-figure" *ngIf="(entry.video.durationWatched || 0) > 0">
+                      Session {{ formatWatchTime(entry.video.durationWatched || 0) }}
+                    </span>
+                    <span class="entry-figure" *ngIf="entry.video.position">
+                      Watched till {{ formatWatchTime(entry.video.position) }}
+                    </span>
+                  </span>
+                </div>
               </div>
-              <p class="entry-notes" *ngIf="entry.video.notes">{{ getNotesPreview(entry.video.notes) }}</p>
+
+              <p class="day-notes" *ngIf="group.hasNotes">
+                <ng-container *ngFor="let entry of group.entries">
+                  <span class="day-note" *ngIf="entry.video.notes">{{ getNotesPreview(entry.video.notes) }}</span>
+                </ng-container>
+              </p>
             </div>
           </div>
         </div>
@@ -57,3 +106,105 @@
     </div>
   </div>
 </div>
+
+<!-- Add Time Dialog -->
+<div class="google-dialog" *ngIf="showAddDialog">
+  <div class="dialog-overlay" (click)="closeAddDialog()"></div>
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <h3 class="dialog-title">Add Time</h3>
+      <button class="dialog-close" (click)="closeAddDialog()" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <form (ngSubmit)="addTime()">
+        <p class="dialog-video" *ngIf="latestVideo">
+          <img class="dialog-video-thumb" [src]="getThumbnail()" [alt]="latestVideo.videoTitle || 'Video thumbnail'" />
+          <span class="dialog-video-title">{{ latestVideo.videoTitle || 'Untitled Video' }}</span>
+        </p>
+
+        <div class="form-group">
+          <label class="google-input-label" for="newDate">Day</label>
+          <input
+            type="date"
+            id="newDate"
+            class="google-input"
+            [(ngModel)]="newDate"
+            name="newDate"
+            [max]="maxDate"
+          />
+          <span class="date-hint">{{ selectedDayLabel }}</span>
+          <span class="new-day-hint" *ngIf="isNewDay">First entry on this day</span>
+        </div>
+
+        <div class="form-group">
+          <label class="google-input-label">Time watched</label>
+          <div class="position-inputs">
+            <div class="position-field">
+              <input
+                type="number"
+                id="addHours"
+                class="google-input"
+                [(ngModel)]="addHours"
+                (ngModelChange)="updateDuration()"
+                name="addHours"
+                placeholder="0"
+                min="0"
+              />
+              <span class="position-unit">hh</span>
+            </div>
+            <span class="position-colon">:</span>
+            <div class="position-field">
+              <input
+                type="number"
+                id="addMinutes"
+                class="google-input"
+                [(ngModel)]="addMinutes"
+                (ngModelChange)="updateDuration()"
+                name="addMinutes"
+                placeholder="16"
+                min="0"
+                max="59"
+              />
+              <span class="position-unit">mm</span>
+            </div>
+            <span class="position-colon">:</span>
+            <div class="position-field">
+              <input
+                type="number"
+                id="addSeconds"
+                class="google-input"
+                [(ngModel)]="addSeconds"
+                (ngModelChange)="updateDuration()"
+                name="addSeconds"
+                placeholder="45"
+                min="0"
+                max="59"
+              />
+              <span class="position-unit">ss</span>
+            </div>
+          </div>
+          <span class="position-preview">Adding {{ formatWatchTime(addDuration) }}</span>
+        </div>
+
+        <p class="position-note">
+          The session continues from the furthest position reached
+          ({{ formatWatchTime(getLatestPosition()) }}).
+        </p>
+
+        <div class="form-actions">
+          <button type="button" class="google-btn google-btn-secondary" (click)="closeAddDialog()">
+            Cancel
+          </button>
+          <button type="submit" class="google-btn" [disabled]="!canAdd">
+            Add Time
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
