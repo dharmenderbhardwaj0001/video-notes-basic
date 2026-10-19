@@ -71,6 +71,17 @@
       word-break: break-all;
     }
 
+    .history-category {
+      display: inline-block;
+      margin: 0 0 8px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: $google-light-grey;
+      color: $google-blue;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
     .history-summary {
       font-size: 14px;
       color: $google-text;

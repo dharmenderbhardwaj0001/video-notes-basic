@@ -121,6 +121,17 @@
         margin: 0 0 8px 0;
       }
 
+      .video-category {
+        display: inline-block;
+        margin: 0 0 8px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: $google-light-grey;
+        color: $google-blue;
+        font-size: 11px;
+        font-weight: 500;
+      }
+
       .video-meta {
         display: flex;
         gap: 16px;
@@ -138,6 +149,7 @@
             height: 14px;
             color: $google-text-secondary;
           }
+
         }
       }
 
@@ -225,6 +237,14 @@
       align-items: center;
       gap: 8px;
     }
+  }
+}
+
+.category-field {
+  > label span {
+    color: $google-text-secondary;
+    font-size: 12px;
+    font-weight: 400;
   }
 }
 

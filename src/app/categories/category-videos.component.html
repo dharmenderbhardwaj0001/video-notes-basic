@@ -1,0 +1,44 @@
+<div class="page-container">
+  <app-header></app-header>
+
+  <div class="page-content">
+    <div class="category-videos-container">
+      <div class="breadcrumb">
+        <button (click)="goToCategories()">Categories</button>
+        <span>/</span>
+        <strong>{{ category }}</strong>
+      </div>
+
+      <div class="page-heading">
+        <div>
+          <h2>{{ category }}</h2>
+          <p>{{ videos.length }} video{{ videos.length === 1 ? '' : 's' }} &bull; Latest added first</p>
+        </div>
+        <button class="google-btn google-btn-secondary" (click)="goToCategories()">All Categories</button>
+      </div>
+
+      <div class="category-video-list" *ngIf="videos.length > 0; else noVideos">
+        <button *ngFor="let video of videos" class="category-video-card" (click)="openVideoHistory(video)">
+          <img [src]="getThumbnail(video)" [alt]="video.videoTitle || 'Video thumbnail'" loading="lazy" />
+          <span class="video-info">
+            <strong>{{ video.videoTitle || 'Untitled Video' }}</strong>
+            <span class="video-url">{{ video.videoUrl || 'No URL' }}</span>
+            <span class="video-meta">
+              Added {{ formatDate(video.updatedAt || video.timestamp) }}
+              &bull; Watched {{ formatDuration(video.durationWatched || video.position || 0) }}
+            </span>
+          </span>
+          <span class="video-arrow">&rarr;</span>
+        </button>
+      </div>
+
+      <ng-template #noVideos>
+        <div class="empty-state">
+          <h3>No videos in this category</h3>
+          <p>This category no longer has any saved videos.</p>
+          <button class="google-btn" (click)="goToCategories()">Back to Categories</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

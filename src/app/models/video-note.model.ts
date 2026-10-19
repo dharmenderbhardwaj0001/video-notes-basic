@@ -2,6 +2,7 @@ export interface VideoNote {
   id: string;
   videoTitle: string;
   videoUrl: string;
+  category?: string;
   notes: string;
   timestamp: Date; // When the note was created/updated
   position: number; // Position in the video (seconds)

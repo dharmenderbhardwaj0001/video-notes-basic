@@ -1,0 +1,116 @@
+@use '../shared/google-theme' as *;
+
+.category-videos-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 24px;
+  color: $google-text-secondary;
+  font-size: 14px;
+
+  button {
+    border: 0;
+    padding: 0;
+    background: none;
+    color: $google-blue;
+    cursor: pointer;
+  }
+}
+
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0 0 8px;
+    color: $google-text;
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  p { margin: 0; color: $google-text-secondary; }
+}
+
+.category-video-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-video-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-md);
+  background: $google-white;
+  box-shadow: var(--shadow-sm);
+  color: $google-text;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
+
+  &:hover {
+    border-color: color-mix(in srgb, $google-blue 35%, transparent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  img {
+    width: 128px;
+    height: 72px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    object-fit: cover;
+    background: $google-light-grey;
+  }
+}
+
+.video-info {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+
+  strong, .video-url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong { font-size: 15px; font-weight: 500; }
+  .video-url, .video-meta { color: $google-text-secondary; font-size: 12px; }
+}
+
+.video-arrow {
+  color: $google-blue;
+  font-size: 20px;
+}
+
+.empty-state {
+  padding: 56px 24px;
+  border: 1px dashed $google-border;
+  border-radius: var(--radius-md);
+  background: $google-white;
+  text-align: center;
+
+  h3 { margin: 0 0 8px; color: $google-text; }
+  p { margin: 0 0 24px; color: $google-text-secondary; }
+}
+
+@media (max-width: 600px) {
+  .page-heading { flex-direction: column; }
+  .category-video-card img { width: 88px; height: 52px; }
+}

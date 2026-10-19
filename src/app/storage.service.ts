@@ -213,6 +213,7 @@ export class StorageService {
       id: videoNote.id || generateId(),
       videoTitle: videoNote.videoTitle || '',
       videoUrl: videoNote.videoUrl || '',
+      category: videoNote.category?.trim() || undefined,
       notes: videoNote.notes || '',
       timestamp: videoNote.timestamp || now,
       position: videoNote.position || 0,
@@ -252,6 +253,45 @@ export class StorageService {
     this.saveAllData(allData);
     
     return newVideoNote;
+  }
+
+  /** Returns the distinct categories already used by saved videos. */
+  getVideoCategories(): string[] {
+    const categories = new Map<string, string>();
+    for (const yearData of this.getAllData()) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          for (const video of dayData.videos) {
+            const category = video.category?.trim();
+            if (category && !categories.has(category.toLocaleLowerCase())) {
+              categories.set(category.toLocaleLowerCase(), category);
+            }
+          }
+        }
+      }
+    }
+    return Array.from(categories.values()).sort((a, b) => a.localeCompare(b));
+  }
+
+  /** Returns all saved videos in a category, newest saved entry first. */
+  getVideosByCategory(category: string): VideoNote[] {
+    const categoryKey = category.trim().toLocaleLowerCase();
+    const videos: VideoNote[] = [];
+    for (const yearData of this.getAllData()) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          for (const video of dayData.videos) {
+            if (video.category?.trim().toLocaleLowerCase() === categoryKey) {
+              videos.push(video);
+            }
+          }
+        }
+      }
+    }
+    return videos.sort((a, b) =>
+      new Date(b.updatedAt || b.timestamp).getTime() -
+      new Date(a.updatedAt || a.timestamp).getTime()
+    );
   }
 
   // Delete video note
@@ -423,6 +463,43 @@ export class StorageService {
     return groups
       .sort((a, b) => (b.durationWatched || 0) - (a.durationWatched || 0))
       .slice(0, limit);
+  }
+
+  // Most recently watched videos across all days, aggregated by video and
+  // ordered by the latest saved watch entry.
+  getLatestVideos(limit: number = 10): TopVideoNote[] {
+    const watchDayOf = (dayDate: Date): TopVideoNote['watchDay'] => {
+      const d = new Date(dayDate);
+      return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
+    };
+
+    const latestByVideo = new Map<string, TopVideoNote>();
+    for (const yearData of this.getAllData()) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          const watchDay = watchDayOf(dayData.date);
+          for (const video of dayData.videos) {
+            const key = getVideoKey(video);
+            const candidate: TopVideoNote = { ...video, watchDay };
+            const current = latestByVideo.get(key);
+            if (!current || this.getVideoActivityTime(candidate) > this.getVideoActivityTime(current)) {
+              latestByVideo.set(key, candidate);
+            }
+          }
+        }
+      }
+    }
+
+    return Array.from(latestByVideo.values())
+      .sort((a, b) => this.getVideoActivityTime(b) - this.getVideoActivityTime(a))
+      .slice(0, limit);
+  }
+
+  private getVideoActivityTime(video: Pick<VideoNote, 'updatedAt' | 'timestamp'>): number {
+    return Math.max(
+      new Date(video.updatedAt || 0).getTime(),
+      new Date(video.timestamp || 0).getTime()
+    );
   }
 
   // Full watch history of one video: every saved entry of the same video

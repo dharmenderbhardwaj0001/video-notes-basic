@@ -10,6 +10,13 @@
           <p class="welcome-subtitle">Here's your learning journey</p>
         </div>
         <div class="progress-actions">
+          <button class="google-btn google-btn-secondary" (click)="openCategories()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M10 4H2v16h20V4h-8l-2-2H10v2zm10 14H4V8h16v10z" fill="currentColor"/>
+            </svg>
+            Categories
+          </button>
           <button class="google-btn google-btn-secondary" (click)="refreshProgress()">
             <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
               <path d="M0 0h24v24H0V0z" fill="none"/>
@@ -75,8 +82,54 @@
         </button>
       </div>
 
-      <!-- Daily Progress Card -->
+      <!-- Latest and top videos -->
       <div class="progress-cards">
+      <div class="progress-card latest-videos">
+        <div class="card-header">
+          <h3>Latest Videos</h3>
+          <label>
+            <select class="card-date" [value]="latestVideoLimit" (change)="changeLatestVideoLimit($any($event.target).value)" aria-label="Number of latest videos">
+              <option value="5">Latest 5</option>
+              <option value="10">Latest 10</option>
+            </select>
+          </label>
+        </div>
+        <div class="top-videos-list" *ngIf="latestVideos.length > 0; else noLatestVideos">
+          <div *ngFor="let video of latestVideos" class="top-video-item latest-video-item" (click)="openVideoHistory(video)" title="Open the watch history of this video">
+            <img class="top-video-thumb" [src]="getThumbnail(video)" [alt]="video.videoTitle || 'Video thumbnail'" loading="lazy" />
+            <div class="top-video-info">
+              <span class="top-video-title">{{ video.videoTitle || 'Untitled Video' }}</span>
+              <span class="top-video-time">Watched {{ formatDuration(video.durationWatched || 0) }}</span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noLatestVideos>
+          <p class="top-videos-empty">No videos watched yet.</p>
+        </ng-template>
+      </div>
+
+      <!-- Top Videos Card -->
+      <div class="progress-card top-videos">
+          <div class="card-header">
+            <h3>Top Videos</h3>
+            <div class="card-date">Top {{ topVideos.length }} by time watched</div>
+          </div>
+          <div class="top-videos-list" *ngIf="topVideos.length > 0; else noTopVideos">
+            <div *ngFor="let video of topVideos; let i = index" class="top-video-item" (click)="openVideoHistory(video)" title="Open the watch history of this video">
+              <span class="top-video-rank">{{ i + 1 }}</span>
+              <img class="top-video-thumb" [src]="getThumbnail(video)" [alt]="video.videoTitle || 'Video thumbnail'" loading="lazy" />
+              <div class="top-video-info">
+                <span class="top-video-title">{{ video.videoTitle || 'Untitled Video' }}</span>
+                <span class="top-video-time">Watched {{ formatDuration(video.durationWatched || 0) }}</span>
+              </div>
+            </div>
+          </div>
+          <ng-template #noTopVideos>
+            <p class="top-videos-empty">No videos watched yet.</p>
+          </ng-template>
+        </div>
+
+        <!-- Daily Progress Card -->
         <div class="progress-card featured">
           <div class="card-header">
             <h3>Today's Progress</h3>
@@ -86,14 +139,9 @@
             <div class="progress-circle">
               <svg viewBox="0 0 100 100" class="circle-bg">
                 <circle cx="50" cy="50" r="45" class="circle-track"/>
-                <circle 
-                  cx="50" 
-                  cy="50" 
-                  r="45" 
-                  class="circle-progress"
+                <circle cx="50" cy="50" r="45" class="circle-progress"
                   [attr.stroke-dasharray]="circleProgress"
-                  [attr.stroke-dashoffset]="circleOffset"
-                />
+                  [attr.stroke-dashoffset]="circleOffset" />
               </svg>
               <div class="circle-text">
                 <span class="time-watched">{{ formatDuration(progressStats?.today?.totalTimeWatched || 0) }}</span>
@@ -115,27 +163,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Top Videos Card -->
-        <div class="progress-card top-videos">
-          <div class="card-header">
-            <h3>Top Videos</h3>
-            <div class="card-date">Top {{ topVideos.length }} by time watched</div>
-          </div>
-          <div class="top-videos-list" *ngIf="topVideos.length > 0; else noTopVideos">
-            <div *ngFor="let video of topVideos; let i = index" class="top-video-item" (click)="openVideoHistory(video)" title="Open the watch history of this video">
-              <span class="top-video-rank">{{ i + 1 }}</span>
-              <img class="top-video-thumb" [src]="getThumbnail(video)" [alt]="video.videoTitle || 'Video thumbnail'" loading="lazy" />
-              <div class="top-video-info">
-                <span class="top-video-title">{{ video.videoTitle || 'Untitled Video' }}</span>
-                <span class="top-video-time">Watched {{ formatDuration(video.durationWatched || 0) }}</span>
-              </div>
-            </div>
-          </div>
-          <ng-template #noTopVideos>
-            <p class="top-videos-empty">No videos watched yet.</p>
-          </ng-template>
         </div>
 
         <!-- Weekly Progress Card -->

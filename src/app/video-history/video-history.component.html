@@ -30,6 +30,7 @@
           <div class="history-info">
             <h2 class="page-title">{{ latestVideo.videoTitle || 'Untitled Video' }}</h2>
             <p class="history-url" *ngIf="latestVideo.videoUrl">{{ latestVideo.videoUrl }}</p>
+            <span class="history-category" *ngIf="latestVideo.category">{{ latestVideo.category }}</span>
             <p class="history-summary">
               {{ days.length }} day{{ days.length !== 1 ? 's' : '' }}
               &bull; {{ getTotalSaves() }} save{{ getTotalSaves() !== 1 ? 's' : '' }}
@@ -214,4 +215,3 @@
     </div>
   </div>
 </div>
-

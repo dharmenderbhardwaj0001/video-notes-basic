@@ -24,6 +24,7 @@ export class DayComponent implements OnInit {
   dayStats: string = '';
   
   videos: VideoNote[] = [];
+  videoCategories: string[] = [];
   dayStatsObj: any = null;
 
   // Dialog states
@@ -35,6 +36,7 @@ export class DayComponent implements OnInit {
   currentVideo: Partial<VideoNote> = {
     videoTitle: '',
     videoUrl: '',
+    category: '',
     notes: '',
     position: 0
   };
@@ -90,6 +92,7 @@ export class DayComponent implements OnInit {
 
   private loadVideos(): void {
     this.videos = this.storage.getVideoNotesForDay(this.year, this.month, this.day);
+    this.videoCategories = this.storage.getVideoCategories();
     this.updateDayStats();
   }
 
@@ -204,6 +207,7 @@ export class DayComponent implements OnInit {
     this.currentVideo = {
       videoTitle: '',
       videoUrl: '',
+      category: '',
       notes: '',
       position: 0
     };
@@ -247,6 +251,7 @@ export class DayComponent implements OnInit {
     this.currentVideo = {
       videoTitle: '',
       videoUrl: '',
+      category: '',
       notes: '',
       position: 0
     };

@@ -24,6 +24,8 @@ export class WelcomeComponent implements OnInit {
   motivationMessages: MotivationMessage[] = [];
   activeMessageIndex: number = 0;
   topVideos: TopVideoNote[] = [];
+  latestVideos: TopVideoNote[] = [];
+  latestVideoLimit = 5;
 
   // Circle progress for today
   circleProgress: number = 283; // 2 * π * 45
@@ -80,6 +82,7 @@ export class WelcomeComponent implements OnInit {
     this.progressStats = this.storage.getProgressStats();
     this.motivationMessages = this.storage.getMotivationMessages();
     this.topVideos = this.storage.getTopVideos(10);
+    this.latestVideos = this.storage.getLatestVideos(this.latestVideoLimit);
     this.activeMessageIndex = 0;
     
     // Update circle progress for today
@@ -167,6 +170,17 @@ export class WelcomeComponent implements OnInit {
 
   refreshProgress(): void {
     this.loadProgressStats();
+  }
+
+  openCategories(): void {
+    this.router.navigate(['/categories']);
+  }
+
+  changeLatestVideoLimit(limit: string): void {
+    const parsedLimit = Number(limit);
+    if (parsedLimit !== 5 && parsedLimit !== 10) return;
+    this.latestVideoLimit = parsedLimit;
+    this.latestVideos = this.storage.getLatestVideos(this.latestVideoLimit);
   }
 
   navigateToCurrentYear(): void {

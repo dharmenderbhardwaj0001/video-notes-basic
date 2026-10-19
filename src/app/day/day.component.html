@@ -53,6 +53,7 @@
             <div class="video-info">
               <h4 class="video-title">{{ video.videoTitle || 'Untitled Video' }}</h4>
               <p class="video-url">{{ getShortUrl(video.videoUrl) }}</p>
+              <span class="video-category" *ngIf="video.category">{{ video.category }}</span>
               <div class="video-meta">
                 <span class="meta-item">
                   <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
@@ -183,7 +184,24 @@
             />
           </div>
         </div>
-        <!-- Row 2: Position (hh : mm : ss) -->
+        <!-- Row 2: Optional category -->
+        <div class="form-group category-field">
+          <label class="google-input-label" for="videoCategory">Category <span>(optional)</span></label>
+          <input
+            type="text"
+            id="videoCategory"
+            class="google-input"
+            [(ngModel)]="currentVideo.category"
+            name="category"
+            list="video-category-options"
+            placeholder="Choose or type a category"
+            autocomplete="off"
+          />
+          <datalist id="video-category-options">
+            <option *ngFor="let category of videoCategories" [value]="category"></option>
+          </datalist>
+        </div>
+        <!-- Row 3: Position (hh : mm : ss) -->
         <div class="form-group">
           <label class="google-input-label">Position</label>
           <div class="position-inputs">

@@ -1,0 +1,31 @@
+<div class="page-container">
+  <app-header></app-header>
+
+  <div class="page-content">
+    <div class="categories-container">
+      <div class="page-heading">
+        <div>
+          <h2>Categories</h2>
+          <p>Browse all your videos by category.</p>
+        </div>
+        <button class="google-btn google-btn-secondary" (click)="goHome()">Dashboard</button>
+      </div>
+
+      <div class="category-grid" *ngIf="categories.length > 0; else noCategories">
+        <button *ngFor="let category of categories" class="category-card" (click)="openCategory(category)">
+          <img class="category-image" [src]="categoryImages.get(category)" [alt]="category + ' category thumbnail'" loading="lazy" />
+          <span class="category-name">{{ category }}</span>
+          <span class="category-arrow">View videos &rarr;</span>
+        </button>
+      </div>
+
+      <ng-template #noCategories>
+        <div class="empty-state">
+          <h3>No categories yet</h3>
+          <p>Add a category while creating or editing a video to see it here.</p>
+          <button class="google-btn" (click)="goHome()">Back to Dashboard</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

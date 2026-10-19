@@ -122,7 +122,8 @@
   display: grid;
   grid-template-columns: 3fr 2fr;
   grid-template-areas:
-    "today top"
+    "latest top"
+    "today today"
     "week alltime";
   gap: 24px;
   margin-bottom: 32px;
@@ -141,9 +142,12 @@
       box-shadow: 0 2px 8px 0 color-mix(in srgb, $google-blue 10%, transparent);
     }
 
-    &.top-videos {
-      grid-area: top;
+    &.latest-videos {
+      grid-area: latest;
+    }
 
+    &.latest-videos,
+    &.top-videos {
       .top-videos-list {
         max-height: 280px;
         overflow-y: auto;
@@ -208,6 +212,10 @@
         color: $google-text-secondary;
         margin: 0;
       }
+    }
+
+    &.top-videos {
+      grid-area: top;
     }
 
     &.week-card {
