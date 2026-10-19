@@ -84,11 +84,11 @@
                 >
                   <span class="entry-time">{{ entry.timeLabel }}</span>
                   <span class="entry-figures">
-                    <span class="entry-figure" *ngIf="(entry.video.durationWatched || 0) > 0">
-                      Session {{ formatWatchTime(entry.video.durationWatched || 0) }}
+                    <span class="entry-figure" *ngIf="entry.watchTime > 0">
+                      {{ isFirstEntry(group, entry) ? 'Session' : 'Watched' }} {{ formatWatchTime(entry.watchTime) }}
                     </span>
-                    <span class="entry-figure" *ngIf="entry.video.position">
-                      Watched till {{ formatWatchTime(entry.video.position) }}
+                    <span class="entry-figure" *ngIf="entry.seenUntil > 0">
+                      Watched till {{ formatWatchTime(entry.seenUntil) }}
                     </span>
                   </span>
                 </div>
@@ -133,6 +133,7 @@
             id="newDate"
             class="google-input"
             [(ngModel)]="newDate"
+            (ngModelChange)="onDateChange()"
             name="newDate"
             [max]="maxDate"
           />
@@ -141,7 +142,7 @@
         </div>
 
         <div class="form-group">
-          <label class="google-input-label">Time watched</label>
+          <label class="google-input-label">Watched till</label>
           <div class="position-inputs">
             <div class="position-field">
               <input
@@ -187,12 +188,18 @@
               <span class="position-unit">ss</span>
             </div>
           </div>
-          <span class="position-preview">Adding {{ formatWatchTime(addDuration) }}</span>
+          <span class="position-preview" *ngIf="!addGoesBackwards">
+            {{ formatWatchTime(addDuration) }} total &middot;
+            +{{ formatWatchTime(addSessionTime) }} this session
+          </span>
+          <span class="position-preview position-error" *ngIf="addGoesBackwards">
+            Must be more than {{ formatWatchTime(dayProgress) }}
+          </span>
         </div>
 
-        <p class="position-note">
-          The session continues from the furthest position reached
-          ({{ formatWatchTime(getLatestPosition()) }}).
+        <p class="position-note" *ngIf="dayProgress > 0">
+          Already watched till {{ formatWatchTime(dayProgress) }}. Enter the new
+          point watched till, for example {{ formatWatchTime(dayProgress + 300) }}.
         </p>
 
         <div class="form-actions">

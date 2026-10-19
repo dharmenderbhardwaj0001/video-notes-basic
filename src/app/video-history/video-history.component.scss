@@ -404,6 +404,10 @@
         font-size: 12px;
         font-weight: 500;
         color: $google-blue;
+
+        &.position-error {
+          color: #d93025;
+        }
       }
     }
 

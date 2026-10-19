@@ -6,7 +6,7 @@ import {
   VideoNote, DayData, MonthData, YearData, generateId, getDateKey, 
   calculateTimeWatched, formatDuration, DailyProgress, ProgressStats, 
   WeeklyProgress, MotivationMessage, getProgressMessage, TopVideoNote,
-  VideoHistoryEntry, getVideoKey, isSameVideo
+  VideoHistoryEntry, getVideoKey, isSameVideo, getVideoProgress
 } from './models/video-note.model';
 
 @Injectable({
@@ -375,36 +375,52 @@ export class StorageService {
   // Each entry carries the day it was last watched on. Used by the
   // "Top Videos" card on the home page.
   getTopVideos(limit: number = 10): TopVideoNote[] {
-    const watchTime = (v: VideoNote): number =>
-      (v.durationWatched ?? v.position ?? 0);
     const watchDayOf = (dayDate: Date): { year: number; month: number; day: number } => {
       const d = new Date(dayDate);
       return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
     };
 
-    const groups = new Map<string, TopVideoNote>();
+    // Every entry of a video, oldest first, so each session can be measured
+    // against the furthest position reached before it.
+    const byVideo = new Map<string, { video: VideoNote; watchDay: TopVideoNote['watchDay'] }[]>();
     for (const yearData of this.getAllData()) {
       for (const monthData of yearData.months) {
         for (const dayData of monthData.days) {
+          const watchDay = watchDayOf(dayData.date);
           for (const video of dayData.videos) {
             const key = getVideoKey(video);
-            const watchDay = watchDayOf(dayData.date);
-            const existing = groups.get(key);
-            if (!existing) {
-              groups.set(key, { ...video, durationWatched: watchTime(video), watchDay });
-            } else {
-              existing.durationWatched = (existing.durationWatched || 0) + watchTime(video);
-              existing.position = Math.max(existing.position || 0, video.position || 0);
-              if ((video.updatedAt || '') > (existing.updatedAt || '')) {
-                existing.updatedAt = video.updatedAt;
-                existing.watchDay = watchDay;
-              }
-            }
+            const entries = byVideo.get(key) || [];
+            entries.push({ video, watchDay });
+            byVideo.set(key, entries);
           }
         }
       }
     }
-    return Array.from(groups.values())
+
+    const groups: TopVideoNote[] = [];
+    for (const entries of byVideo.values()) {
+      entries.sort((a, b) =>
+        new Date(a.video.timestamp).getTime() - new Date(b.video.timestamp).getTime() ||
+        String(a.video.updatedAt || '').localeCompare(String(b.video.updatedAt || ''))
+      );
+
+      const progress = getVideoProgress(entries.map(entry => entry.video));
+      let latest = entries[entries.length - 1];
+      for (const entry of entries) {
+        if ((entry.video.updatedAt || '') > (latest.video.updatedAt || '')) {
+          latest = entry;
+        }
+      }
+
+      groups.push({
+        ...latest.video,
+        position: progress.totalWatched,
+        durationWatched: progress.totalWatched,
+        watchDay: latest.watchDay
+      });
+    }
+
+    return groups
       .sort((a, b) => (b.durationWatched || 0) - (a.durationWatched || 0))
       .slice(0, limit);
   }
@@ -418,23 +434,36 @@ export class StorageService {
       return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
     };
 
-    const entries: VideoHistoryEntry[] = [];
+    // Resolve the video key first: the reference entry may not be the first
+    // one walked, so matching has to happen in a second pass.
     let key: string | null = null;
     for (const yearData of this.getAllData()) {
       for (const monthData of yearData.months) {
         for (const dayData of monthData.days) {
+          const target = dayData.videos.find(video => video.id === videoId);
+          if (target) {
+            key = getVideoKey(target);
+            break;
+          }
+        }
+        if (key !== null) break;
+      }
+      if (key !== null) break;
+    }
+    if (key === null || key.length === 0) return [];
+
+    const entries: VideoHistoryEntry[] = [];
+    for (const yearData of this.getAllData()) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
           for (const video of dayData.videos) {
-            if (key === null && video.id === videoId) {
-              key = getVideoKey(video);
-            }
-            if (key !== null && key.length > 0 && getVideoKey(video) === key) {
+            if (getVideoKey(video) === key) {
               entries.push({ video, day: dayOf(dayData.date), date: new Date(dayData.date) });
             }
           }
         }
       }
     }
-    if (key === null) return [];
     return entries.sort((a, b) =>
       a.date.getTime() - b.date.getTime() ||
       String(a.video.updatedAt || '').localeCompare(String(b.video.updatedAt || ''))
@@ -517,17 +546,35 @@ export class StorageService {
         allDays.forEach(day => {
           const videos = this.getVideoNotesForDay(year, month, day);
           const date = new Date(year, month - 1, day);
-          
-          const totalTime = videos.reduce((sum, video) => sum + (video.durationWatched || video.position || 0), 0);
+
+          // Each video counts once, as the furthest point reached on that
+          // day; separate days of the same video are different days of
+          // progress, not extra time on the same watch.
+          const byVideo = new Map<string, VideoNote[]>();
+          for (const video of videos) {
+            const key = getVideoKey(video);
+            const list = byVideo.get(key) || [];
+            list.push(video);
+            byVideo.set(key, list);
+          }
+          const totals = Array.from(byVideo.values()).map(list => {
+            const progress = getVideoProgress(list);
+            return {
+              total: progress.totalWatched,
+              longest: Math.max(...progress.sessions, progress.totalWatched)
+            };
+          });
+
+          const totalTime = totals.reduce((sum, t) => sum + t.total, 0);
           const notesCount = videos.filter(v => v.notes && v.notes.trim().length > 0).length;
-          const longestSession = Math.max(...videos.map(v => v.durationWatched || v.position || 0), 0);
-          
+          const longestSession = Math.max(...totals.map(t => t.longest), 0);
+
           allTimeTotal += totalTime;
           
           dailyProgress.push({
             date,
             totalTimeWatched: totalTime,
-            videosWatched: videos.length,
+            videosWatched: byVideo.size,
             notesTaken: notesCount,
             longestSession,
             dayOfWeek: dayNames[date.getDay()]
@@ -658,9 +705,18 @@ export class StorageService {
     return getProgressMessage(stats);
   }
 
-  // Get time watched for a specific day
+  // Get time watched for a specific day: each video counts once, by the
+  // furthest point reached that day.
   getTimeWatchedForDay(year: number, month: number, day: number): number {
     const videos = this.getVideoNotesForDay(year, month, day);
-    return videos.reduce((sum, video) => sum + (video.durationWatched || video.position || 0), 0);
+    const byVideo = new Map<string, VideoNote[]>();
+    for (const video of videos) {
+      const key = getVideoKey(video);
+      const list = byVideo.get(key) || [];
+      list.push(video);
+      byVideo.set(key, list);
+    }
+    return Array.from(byVideo.values())
+      .reduce((sum, list) => sum + getVideoProgress(list).totalWatched, 0);
   }
 }

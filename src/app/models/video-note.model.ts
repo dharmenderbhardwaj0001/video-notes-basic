@@ -17,6 +17,68 @@ export interface DayData {
   videos: VideoNote[];
 }
 
+// A video has a single watch-time milestone: the furthest point it has been
+// watched to. Every saved entry records the point reached ("watched till"),
+// so a video watched to 50 min yesterday and to 1h 10m today has been watched
+// 1h 10m — never 2 hours. Watch time can only grow: a later entry never
+// reports less than an earlier one.
+//
+// Older saves stored `durationWatched` equal to `position`; those are not
+// session lengths and are ignored. A genuinely larger `durationWatched`
+// means the session rewound and covered extra footage, so the entry counts
+// as reaching `position + that extra`.
+export function getEntryReached(video: VideoNote): number {
+  const position = Math.max(0, video.position || 0);
+  const recorded = Math.max(0, video.durationWatched || 0);
+  return recorded > position ? recorded : position;
+}
+
+// Watch time contributed by a single entry: how far past the previously
+// reached point it goes. Never negative, so days cannot add up twice.
+export function getEntryWatchTime(video: VideoNote, earlierPosition: number = 0): number {
+  return Math.max(0, getEntryReached(video) - Math.max(0, earlierPosition || 0));
+}
+
+// True when an entry moves the video's progress forward.
+export function isWatchEntry(video: VideoNote, earlierPosition: number = 0): boolean {
+  return getEntryReached(video) > Math.max(0, earlierPosition || 0);
+}
+
+/**
+ * A video's watch progress, measured as the furthest point reached.
+ *
+ * Every saved entry of the same video belongs to one milestone line: a video
+ * watched to 50 min yesterday and to 1h 10m today has been watched 1h 10m —
+ * not 2 hours. Entries may move backwards within a day (restarting the video
+ * or logging an earlier point), so the position is never allowed to regress.
+ *
+ * `totalWatched` is that furthest point. `sessions` maps each entry to the
+ * watch time it actually added on top of the progress reached before it, so
+ * per-entry labels stay meaningful without inflating any total.
+ */
+export interface VideoProgress {
+  /** Furthest point reached, i.e. the video's total watch time. */
+  totalWatched: number;
+  /** Watch time added by each entry, keyed by entry index in input order. */
+  sessions: number[];
+}
+
+/** Computes the milestone progress of all entries of one video. */
+export function getVideoProgress(
+  entries: Pick<VideoNote, 'position' | 'durationWatched'>[]
+): VideoProgress {
+  const sessions: number[] = [];
+  let furthest = 0;
+
+  for (const entry of entries) {
+    const reached = getEntryReached(entry as VideoNote);
+    sessions.push(Math.max(0, reached - furthest));
+    furthest = Math.max(furthest, reached);
+  }
+
+  return { totalWatched: furthest, sessions };
+}
+
 // A video note ranked in the "Top Videos" list, carrying the calendar
 // day it was last watched on so the UI can link to that day's page.
 export interface TopVideoNote extends VideoNote {

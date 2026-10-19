@@ -96,7 +96,8 @@ export class DayComponent implements OnInit {
   private updateDayStats(): void {
     const totalVideos = this.videos.length;
     const totalNotes = this.videos.filter(v => v.notes && v.notes.trim().length > 0).length;
-    const totalTime = this.videos.reduce((total, video) => total + video.position, 0);
+    // Each video counts once, by the furthest point reached that day.
+    const totalTime = this.storage.getTimeWatchedForDay(this.year, this.month, this.day);
     const continueWatching = this.videos.filter(v => v.position > 0).length;
 
     this.dayStatsObj = {

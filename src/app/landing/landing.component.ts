@@ -74,6 +74,10 @@ export class LandingComponent implements AfterViewInit {
     document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   onMockMove(event: MouseEvent): void {
     const target = event.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
