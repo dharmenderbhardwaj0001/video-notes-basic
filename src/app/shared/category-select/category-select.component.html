@@ -1,0 +1,79 @@
+<div class="category-select" [class.is-open]="isOpen" [class.open-up]="openUpward">
+  <button
+    type="button"
+    class="category-select-trigger"
+    [attr.aria-expanded]="isOpen"
+    aria-haspopup="listbox"
+    (click)="toggle()"
+  >
+    <span class="category-select-value" [class.is-placeholder]="!value">{{ value || placeholder }}</span>
+    <svg class="category-select-caret" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+      <path d="M7 10l5 5 5-5z" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <div class="category-select-menu" *ngIf="isOpen">
+    <ng-container *ngIf="!creating">
+      <input
+        type="text"
+        class="category-select-search"
+        [(ngModel)]="query"
+        name="categorySearch"
+        placeholder="Search categories"
+        autocomplete="off"
+        autofocus
+        (keydown.enter)="canCreate ? startCreating() : null"
+      />
+
+      <div class="category-select-options" role="listbox">
+        <button
+          type="button"
+          class="category-select-option"
+          *ngFor="let category of filteredCategories"
+          [class.is-selected]="category === value"
+          role="option"
+          [attr.aria-selected]="category === value"
+          (click)="select(category)"
+        >
+          <span>{{ category }}</span>
+          <svg *ngIf="category === value" xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+            <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+          </svg>
+        </button>
+
+        <p class="category-select-empty" *ngIf="filteredCategories.length === 0">
+          No matching categories
+        </p>
+      </div>
+
+      <button type="button" class="category-select-create" (click)="startCreating()" [disabled]="!canCreate">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+          <path d="M0 0h24v24H0V0z" fill="none"/>
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+        </svg>
+        {{ canCreate ? 'Create "' + query.trim() + '"' : 'Create new category' }}
+      </button>
+    </ng-container>
+
+    <div class="category-select-new" *ngIf="creating">
+      <label class="category-select-new-label" for="newCategoryName">New category</label>
+      <input
+        type="text"
+        id="newCategoryName"
+        class="category-select-search"
+        [(ngModel)]="draftCategory"
+        name="newCategoryName"
+        placeholder="Category name"
+        autocomplete="off"
+        autofocus
+        (keydown.enter)="confirmCreate()"
+      />
+      <div class="category-select-new-actions">
+        <button type="button" class="google-btn google-btn-secondary" (click)="creating = false">Back</button>
+        <button type="button" class="google-btn" [disabled]="!draftCategory.trim()" (click)="confirmCreate()">
+          Use category
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

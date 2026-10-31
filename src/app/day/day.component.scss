@@ -295,9 +295,18 @@
 
 // Dialog Styles
 .google-dialog {
-  // Wider dialog for the video form
   .dialog-content {
     max-width: 760px;
+    overflow: visible;
+    // Scroll the body instead of the whole card so the header stays put.
+    max-height: 90vh;
+  }
+
+  .dialog-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: $google-white;
   }
 
   .dialog-header {
@@ -416,6 +425,11 @@
       margin-top: 24px;
       padding-top: 16px;
       border-top: 1px solid $google-border;
+      // Keep the actions reachable on short screens while the content scrolls.
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      background-color: $google-white;
     }
   }
 

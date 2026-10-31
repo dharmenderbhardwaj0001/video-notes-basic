@@ -186,20 +186,13 @@
         </div>
         <!-- Row 2: Optional category -->
         <div class="form-group category-field">
-          <label class="google-input-label" for="videoCategory">Category <span>(optional)</span></label>
-          <input
-            type="text"
-            id="videoCategory"
-            class="google-input"
+          <label class="google-input-label">Category <span>(optional)</span></label>
+          <app-category-select
+            [categories]="videoCategories"
+            placeholder="Choose or create a category"
             [(ngModel)]="currentVideo.category"
             name="category"
-            list="video-category-options"
-            placeholder="Choose or type a category"
-            autocomplete="off"
-          />
-          <datalist id="video-category-options">
-            <option *ngFor="let category of videoCategories" [value]="category"></option>
-          </datalist>
+          ></app-category-select>
         </div>
         <!-- Row 3: Position (hh : mm : ss) -->
         <div class="form-group">

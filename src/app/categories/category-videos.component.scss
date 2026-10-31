@@ -40,6 +40,14 @@
   p { margin: 0; color: $google-text-secondary; }
 }
 
+.heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .category-video-list {
   display: flex;
   flex-direction: column;
@@ -110,7 +118,149 @@
   p { margin: 0 0 24px; color: $google-text-secondary; }
 }
 
+// Dialog styles (shared Google dialog, same layout as the day page)
+.google-dialog {
+  .dialog-content {
+    max-width: 760px;
+    overflow: visible;
+    max-height: 90vh;
+  }
+
+  .dialog-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: $google-white;
+  }
+
+  .dialog-header {
+    .dialog-close {
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .dialog-body {
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+
+      .form-group {
+        flex: 1;
+        min-width: 0;
+        margin-bottom: 0;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+
+      .google-input-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: $google-text-secondary;
+        margin-bottom: 6px;
+      }
+
+      .google-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid $google-border;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: $google-font;
+        color: $google-text;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: $google-blue;
+          box-shadow: 0 0 0 2px color-mix(in srgb, $google-blue 20%, transparent);
+        }
+
+        &::placeholder {
+          color: $google-text-secondary;
+        }
+
+        &-textarea {
+          resize: vertical;
+          min-height: 100px;
+        }
+      }
+
+      // Position (hours / minutes / seconds) inputs
+      .position-inputs {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+
+        .position-field {
+          position: relative;
+          flex: 1;
+
+          .google-input {
+            text-align: center;
+            padding-right: 28px;
+            -moz-appearance: textfield;
+            appearance: textfield;
+
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+          }
+
+          .position-unit {
+            position: absolute;
+            right: 10px;
+            bottom: 9px;
+            font-size: 11px;
+            color: $google-text-secondary;
+            pointer-events: none;
+          }
+        }
+
+        .position-colon {
+          font-size: 18px;
+          font-weight: 500;
+          color: $google-text-secondary;
+          padding-bottom: 6px;
+        }
+      }
+
+      .position-preview {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        color: $google-blue;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid $google-border;
+      // Keep the actions reachable on short screens while the content scrolls.
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      background-color: $google-white;
+    }
+  }
+}
+
 @media (max-width: 600px) {
   .page-heading { flex-direction: column; }
+  .heading-actions { justify-content: flex-start; }
   .category-video-card img { width: 88px; height: 52px; }
+  .google-dialog .dialog-body .form-row { flex-direction: column; gap: 0; }
 }

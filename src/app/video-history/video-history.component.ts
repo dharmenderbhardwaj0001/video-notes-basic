@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../storage.service';
 import {
   VideoNote, formatDuration,
-  getVideoThumbnail, getYouTubeThumbnailUrl, getVideoProgress, isWatchEntry
+  getVideoThumbnail, getYouTubeThumbnailUrl, getVideoProgress, isWatchEntry,
+  isVideoCompleted, getCompletedAt
 } from '../models/video-note.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,6 +34,10 @@ interface DayGroup {
   position: number;
   hasNotes: boolean;
   isToday: boolean;
+  /** The video is marked as fully watched. */
+  isCompleted: boolean;
+  /** When the video was marked complete, when that happened on this day. */
+  completedAt: Date | null;
   entries: WatchEntry[];
 }
 
@@ -49,6 +54,10 @@ export class VideoHistoryComponent implements OnInit {
   days: DayGroup[] = [];
   latestVideo: VideoNote | null = null;
   today: Date = new Date();
+  /** True when the video has been marked as fully watched. */
+  isCompleted: boolean = false;
+  /** When the video was marked fully watched, if it was. */
+  completedAt: Date | null = null;
 
   // "Add time" dialog state
   showAddDialog: boolean = false;
@@ -90,7 +99,13 @@ export class VideoHistoryComponent implements OnInit {
 
     // Sessions are the watch time each entry added on top of the progress
     // reached before it (see getVideoProgress).
-    const sessions = getVideoProgress(entries.map(entry => entry.video)).sessions;
+    const notes = entries.map(entry => entry.video);
+    const sessions = getVideoProgress(notes).sessions;
+    this.isCompleted = isVideoCompleted(notes);
+    this.completedAt = getCompletedAt(notes);
+    const completion = this.completedAt ? this.toDateKey(
+      this.completedAt.getFullYear(), this.completedAt.getMonth() + 1, this.completedAt.getDate()
+    ) : null;
 
     const groups: DayGroup[] = [];
     const groupsByDate = new Map<string, DayGroup>();
@@ -111,6 +126,8 @@ export class VideoHistoryComponent implements OnInit {
           position: 0,
           hasNotes: false,
           isToday: this.isSameDay(entry.date, this.today),
+          isCompleted: false,
+          completedAt: null,
           entries: []
         };
         groupsByDate.set(dateKey, group);
@@ -142,6 +159,13 @@ export class VideoHistoryComponent implements OnInit {
     this.days = groups.sort((a, b) => b.date.getTime() - a.date.getTime());
     for (const group of this.days) {
       group.entries.sort((a, b) => this.entryTime(b.video) - this.entryTime(a.video));
+
+      // The day the video was finished carries the badge for the whole
+      // history, so later days stay readable.
+      const isCompletionDay = this.isCompleted && completion !== null &&
+        completion === this.toDateKey(group.year, group.month, group.day);
+      group.isCompleted = isCompletionDay;
+      group.completedAt = isCompletionDay ? this.completedAt : null;
     }
 
     this.latestVideo = entries.length > 0
@@ -188,6 +212,26 @@ export class VideoHistoryComponent implements OnInit {
     return this.days
       .filter(group => this.toDateKey(group.year, group.month, group.day) === dateKey)
       .reduce((max, group) => Math.max(max, group.position), 0);
+  }
+
+  /**
+   * Marks the video as fully watched, or clears the mark. Completion belongs
+   * to the video, so every saved entry is updated and the history reloads.
+   */
+  toggleCompleted(event?: Event): void {
+    event?.stopPropagation();
+    if (!this.latestVideo) return;
+    if (!this.storage.setVideoCompleted(this.latestVideo.id, !this.isCompleted)) return;
+    this.loadHistory();
+  }
+
+  /** Formatted label for when the video was finished. */
+  getCompletedLabel(): string {
+    const date = this.completedAt;
+    if (!date) return 'Completed';
+    const day = this.getRelativeDayLabel(date);
+    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return day ? `Completed ${day.toLowerCase()} at ${time}` : `Completed ${this.formatShortDate(date)} at ${time}`;
   }
 
   getSavesLabel(group: DayGroup): string {
@@ -340,6 +384,11 @@ export class VideoHistoryComponent implements OnInit {
     if (isNaN(date.getTime())) return '';
     const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     return video.startTime ? `started ${time}` : `saved ${time}`;
+  }
+
+  private formatShortDate(date: Date): string {
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    return `${month} ${date.getDate()}`;
   }
 
   private formatFullDate(date: Date): string {

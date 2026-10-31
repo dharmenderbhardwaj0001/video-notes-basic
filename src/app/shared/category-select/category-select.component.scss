@@ -1,0 +1,215 @@
+@use '../google-theme' as *;
+
+:host {
+  display: block;
+  position: relative;
+}
+
+.category-select {
+  position: relative;
+}
+
+.category-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-sm);
+  background: $google-white;
+  color: $google-text;
+  font-family: $google-font;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+
+  &:hover {
+    border-color: color-mix(in srgb, $google-blue 45%, $google-border);
+  }
+
+  &:focus-visible,
+  .is-open & {
+    outline: none;
+    border-color: $google-blue;
+    box-shadow: 0 0 0 2px color-mix(in srgb, $google-blue 20%, transparent);
+  }
+}
+
+.category-select-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.is-placeholder {
+    color: $google-text-secondary;
+  }
+}
+
+.category-select-caret {
+  flex-shrink: 0;
+  color: $google-text-secondary;
+  transition: transform var(--speed) var(--ease);
+
+  .is-open & {
+    transform: rotate(180deg);
+  }
+}
+
+.category-select-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 8px;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-md);
+  background: $google-white;
+  box-shadow: var(--shadow-md);
+  animation: categorySelectIn 0.14s var(--ease);
+
+  .open-up & {
+    top: auto;
+    bottom: calc(100% + 6px);
+    animation-name: categorySelectUpIn;
+  }
+}
+
+@keyframes categorySelectUpIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes categorySelectIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.category-select-search {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-sm);
+  background: $google-white;
+  color: $google-text;
+  font-family: $google-font;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: $google-blue;
+    box-shadow: 0 0 0 2px color-mix(in srgb, $google-blue 18%, transparent);
+  }
+
+  &::placeholder {
+    color: $google-text-secondary;
+  }
+}
+
+.category-select-options {
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 8px 0;
+}
+
+.category-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: $google-text;
+  font-family: $google-font;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  svg {
+    flex-shrink: 0;
+    color: $google-blue;
+  }
+
+  &:hover {
+    background: $google-hover;
+  }
+
+  &.is-selected {
+    color: $google-blue;
+    font-weight: 500;
+    background: color-mix(in srgb, $google-blue 8%, transparent);
+  }
+}
+
+.category-select-empty {
+  margin: 4px 10px;
+  color: $google-text-secondary;
+  font-size: 13px;
+}
+
+.category-select-create {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px dashed $google-border;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: $google-blue;
+  font-family: $google-font;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+
+  span,
+  &:not(:disabled):hover {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:not(:disabled):hover {
+    border-color: $google-blue;
+    background: color-mix(in srgb, $google-blue 4%, transparent);
+  }
+
+  &:disabled {
+    color: $google-text-secondary;
+    cursor: default;
+  }
+}
+
+.category-select-new {
+  padding: 4px;
+
+  .category-select-new-label {
+    display: block;
+    margin-bottom: 6px;
+    color: $google-text-secondary;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .category-select-new-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+  }
+}

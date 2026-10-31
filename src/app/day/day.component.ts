@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CategorySelectComponent } from '../shared/category-select/category-select.component';
 import { StorageService } from '../storage.service';
 import { VideoNote, generateId, getVideoThumbnail, getYouTubeThumbnailUrl, isSameVideo } from '../models/video-note.model';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +10,7 @@ import { HeaderComponent } from '../header/header.component';
 @Component({
   selector: 'app-day',
   standalone: true,
-  imports: [FormsModule, CommonModule, HeaderComponent],
+  imports: [FormsModule, CommonModule, HeaderComponent, CategorySelectComponent],
   templateUrl: './day.component.html',
   styleUrls: ['./day.component.scss']
 })

@@ -43,13 +43,37 @@
     transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
   margin-bottom: 24px;
 
-  .history-thumb {
-    width: 160px;
-    height: 90px;
-    object-fit: cover;
-    border-radius: var(--radius-md);
-    background-color: $google-light-grey;
+  .history-thumb-wrap {
+    position: relative;
     flex-shrink: 0;
+    line-height: 0;
+
+    .history-thumb {
+      width: 160px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      background-color: $google-light-grey;
+    }
+
+    .completed-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      background-color: color-mix(in srgb, $google-green 55%, #000 15%);
+      color: #fff;
+
+      svg {
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+      }
+    }
+  }
+
+  &.is-completed {
+    border-color: color-mix(in srgb, $google-green 45%, transparent);
   }
 
   .history-info {
@@ -71,15 +95,39 @@
       word-break: break-all;
     }
 
+    .history-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px;
+
+      &:empty {
+        display: none;
+      }
+    }
+
     .history-category {
       display: inline-block;
-      margin: 0 0 8px;
       padding: 3px 8px;
       border-radius: 999px;
       background: $google-light-grey;
       color: $google-blue;
       font-size: 11px;
       font-weight: 500;
+    }
+
+    .completed-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background-color: color-mix(in srgb, $google-green 14%, transparent);
+      color: color-mix(in srgb, $google-green 70%, #000 12%);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
     }
 
     .history-summary {
@@ -91,6 +139,27 @@
 
   .history-actions {
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+
+    .google-btn {
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .complete-btn {
+      background-color: $google-green;
+
+      &:hover {
+        background-color: color-mix(in srgb, $google-green 90%, #000);
+      }
+
+      &:active {
+        background-color: color-mix(in srgb, $google-green 82%, #000);
+      }
+    }
   }
 }
 
@@ -149,6 +218,21 @@
     }
   }
 
+  &.day-completed {
+    .day-marker {
+      background-color: $google-green;
+      box-shadow: 0 0 0 2px $google-green;
+    }
+
+    .day-card {
+      border-color: color-mix(in srgb, $google-green 40%, transparent);
+
+      &:hover {
+        border-color: color-mix(in srgb, $google-green 60%, transparent);
+      }
+    }
+  }
+
   .day-header {
     display: flex;
     justify-content: space-between;
@@ -190,6 +274,19 @@
         font-weight: 500;
         color: $google-text;
       }
+
+      .day-completed-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background-color: color-mix(in srgb, $google-green 14%, transparent);
+        color: color-mix(in srgb, $google-green 70%, #000 12%);
+        font-size: 11px;
+        font-weight: 500;
+        flex-shrink: 0;
+      }
     }
 
     .day-stats {
@@ -230,9 +327,17 @@
     }
 
     .entry-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 13px;
       font-weight: 500;
       color: $google-text;
+
+      .entry-check {
+        color: $google-green;
+        flex-shrink: 0;
+      }
     }
 
     .entry-figures {
@@ -243,6 +348,34 @@
       .entry-figure {
         font-size: 13px;
         color: $google-text-secondary;
+      }
+    }
+  }
+
+  .day-completed-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding: 8px 16px;
+    border-top: 1px dashed color-mix(in srgb, $google-green 40%, transparent);
+    background-color: color-mix(in srgb, $google-green 4%, transparent);
+    font-size: 12px;
+    color: $google-text-secondary;
+
+    .link-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: $google-font;
+      color: $google-blue;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
       }
     }
   }
@@ -285,12 +418,31 @@
 
 @media (max-width: 768px) {
   .history-header {
-    flex-direction: column;
+    flex-wrap: wrap;
     align-items: flex-start;
+    row-gap: 12px;
 
-    .history-thumb {
+    .history-thumb-wrap {
+      width: 120px;
+
+      .history-thumb {
+        width: 120px;
+        height: 68px;
+      }
+    }
+
+    .history-info {
+      flex: 1 1 180px;
+    }
+
+    .history-actions {
       width: 100%;
-      height: auto;
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .google-btn {
+        flex: 1 1 auto;
+      }
     }
   }
 }

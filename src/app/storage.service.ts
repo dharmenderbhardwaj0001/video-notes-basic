@@ -221,6 +221,10 @@ export class StorageService {
       endTime: videoNote.endTime || now, // Default to now if not provided
       durationWatched: videoNote.durationWatched || 
         calculateTimeWatched(videoNote.startTime, videoNote.endTime || now, videoNote.position || 0),
+      completed: videoNote.completed === true,
+      completedAt: videoNote.completed === true
+        ? (videoNote.completedAt || now)
+        : undefined,
       createdAt: videoNote.createdAt || now,
       updatedAt: now
     };
@@ -545,6 +549,52 @@ export class StorageService {
       a.date.getTime() - b.date.getTime() ||
       String(a.video.updatedAt || '').localeCompare(String(b.video.updatedAt || ''))
     );
+  }
+
+  // Marks the video as fully watched (or clears the mark) on every saved
+  // entry of the same video, so the whole history reports one state.
+  setVideoCompleted(videoId: string, completed: boolean): boolean {
+    const allData = this.getAllData();
+    let reference: VideoNote | null = null;
+    for (const yearData of allData) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          const found = dayData.videos.find(video => video.id === videoId);
+          if (found) { reference = found; break; }
+        }
+        if (reference) break;
+      }
+      if (reference) break;
+    }
+    if (!reference) return false;
+
+    // Only applies to a single video, so marking every entry of it (and
+    // clearing stale marks on all other videos) keeps one state per history.
+    // The mark is the single source of truth; the video stays readable.
+    const now = new Date();
+    for (const yearData of allData) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          for (const video of dayData.videos) {
+            if (isSameVideo(video, reference)) {
+              // Keep the original completion time while it stays completed.
+              const completedAt = completed
+                ? (video.completed === true && video.completedAt ? video.completedAt : now)
+                : undefined;
+              video.completed = completed;
+              video.completedAt = completedAt;
+              video.updatedAt = now;
+            } else if (completed && video.completed) {
+              video.completed = false;
+              video.completedAt = undefined;
+            }
+          }
+        }
+      }
+    }
+
+    this.saveAllData(allData);
+    return true;
   }
 
   // Every saved entry of one video on one calendar day. A video can be

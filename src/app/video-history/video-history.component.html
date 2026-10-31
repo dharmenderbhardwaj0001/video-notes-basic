@@ -25,20 +25,50 @@
 
       <ng-container *ngIf="latestVideo">
         <!-- Video summary -->
-        <div class="history-header">
-          <img class="history-thumb" [src]="getThumbnail()" [alt]="latestVideo.videoTitle || 'Video thumbnail'" />
+        <div class="history-header" [class.is-completed]="isCompleted">
+          <div class="history-thumb-wrap">
+            <img class="history-thumb" [src]="getThumbnail()" [alt]="latestVideo.videoTitle || 'Video thumbnail'" />
+            <span class="completed-overlay" *ngIf="isCompleted" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 0 24 24" width="28">
+                <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+              </svg>
+            </span>
+          </div>
           <div class="history-info">
             <h2 class="page-title">{{ latestVideo.videoTitle || 'Untitled Video' }}</h2>
             <p class="history-url" *ngIf="latestVideo.videoUrl">{{ latestVideo.videoUrl }}</p>
-            <span class="history-category" *ngIf="latestVideo.category">{{ latestVideo.category }}</span>
+            <div class="history-tags">
+              <span class="history-category" *ngIf="latestVideo.category">{{ latestVideo.category }}</span>
+              <span class="completed-badge" *ngIf="isCompleted">
+                <svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 24 24" width="14">
+                  <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                </svg>
+                Watched fully
+              </span>
+            </div>
             <p class="history-summary">
               {{ days.length }} day{{ days.length !== 1 ? 's' : '' }}
               &bull; {{ getTotalSaves() }} save{{ getTotalSaves() !== 1 ? 's' : '' }}
               &bull; {{ formatWatchTime(getTotalWatchTime()) }} watched
-              &bull; Watched till {{ formatWatchTime(getLatestPosition()) }}
+              &bull; {{ isCompleted ? getCompletedLabel() : 'Watched till ' + formatWatchTime(getLatestPosition()) }}
             </p>
           </div>
           <div class="history-actions">
+            <button
+              class="google-btn"
+              [class.google-btn-secondary]="isCompleted"
+              [class.complete-btn]="!isCompleted"
+              (click)="toggleCompleted()"
+              [title]="isCompleted ? 'Remove the completed mark' : 'Mark this video as fully watched'"
+            >
+              <svg *ngIf="!isCompleted" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+              </svg>
+              <svg *ngIf="isCompleted" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z" fill="currentColor"/>
+              </svg>
+              {{ isCompleted ? 'Unmark complete' : 'Mark complete' }}
+            </button>
             <button class="google-btn" (click)="openAddDialog()">
               <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
                 <path d="M0 0h24v24H0V0z" fill="none"/>
@@ -60,18 +90,27 @@
 
         <!-- Day timeline: newest day first -->
         <div class="history-timeline">
-          <div class="history-day" *ngFor="let group of days">
+          <div class="history-day" *ngFor="let group of days" [class.day-completed]="group.isCompleted">
             <div class="day-marker"></div>
             <div class="day-card">
               <div class="day-header" (click)="goToDay(group)" title="Open this day">
                 <div class="day-date">
                   <span class="day-badge" *ngIf="group.relativeLabel">{{ group.relativeLabel }}</span>
                   <span class="day-date-text">{{ group.dateLabel }}</span>
+                  <span class="day-completed-chip" *ngIf="group.isCompleted">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="13" viewBox="0 0 24 24" width="13">
+                      <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                    </svg>
+                    Completed
+                  </span>
                 </div>
                 <div class="day-stats">
                   <span class="day-stat">{{ getSavesLabel(group) }}</span>
-                  <span class="day-stat">{{ formatWatchTime(group.totalWatched) }} watched</span>
-                  <span class="day-stat" *ngIf="group.position > 0">till {{ formatWatchTime(group.position) }}</span>
+                  <span class="day-stat" *ngIf="group.isCompleted">{{ formatWatchTime(group.position) }} — fully watched</span>
+                  <ng-container *ngIf="!group.isCompleted">
+                    <span class="day-stat">{{ formatWatchTime(group.totalWatched) }} watched</span>
+                    <span class="day-stat" *ngIf="group.position > 0">till {{ formatWatchTime(group.position) }}</span>
+                  </ng-container>
                   <span class="day-open">Open day</span>
                 </div>
               </div>
@@ -83,7 +122,12 @@
                   (click)="openVideo(group, entry)"
                   title="Open this video note"
                 >
-                  <span class="entry-time">{{ entry.timeLabel }}</span>
+                  <span class="entry-time">
+                    <svg class="entry-check" *ngIf="group.isCompleted" xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 24 24" width="14">
+                      <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                    </svg>
+                    {{ entry.timeLabel }}
+                  </span>
                   <span class="entry-figures">
                     <span class="entry-figure" *ngIf="entry.watchTime > 0">
                       {{ isFirstEntry(group, entry) ? 'Session' : 'Watched' }} {{ formatWatchTime(entry.watchTime) }}
@@ -93,6 +137,11 @@
                     </span>
                   </span>
                 </div>
+              </div>
+
+              <div class="day-completed-note" *ngIf="group.isCompleted && group.completedAt">
+                <span>Marked as fully watched {{ formatWatchTime(group.position) }} into the video</span>
+                <button type="button" class="link-btn" (click)="toggleCompleted($event)">Mark as unwatched</button>
               </div>
 
               <p class="day-notes" *ngIf="group.hasNotes">

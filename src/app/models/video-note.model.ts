@@ -9,6 +9,8 @@ export interface VideoNote {
   startTime?: Date; // When video watching started
   endTime?: Date; // When video watching ended
   durationWatched?: number; // Duration watched in seconds
+  completed?: boolean; // Marked as fully watched
+  completedAt?: Date; // When it was marked complete
   createdAt: Date;
   updatedAt: Date;
 }
@@ -191,6 +193,42 @@ export function calculateTimeWatched(startTime: Date | undefined, endTime: Date 
   if (!startTime || !endTime) return position; // Fallback to position if no timestamps
   const diffMs = endTime.getTime() - startTime.getTime();
   return Math.max(Math.floor(diffMs / 1000), position);
+}
+
+// True when a video was marked as fully watched. Completion lives on every
+// saved entry of the video, so checking the newest entry is enough. Marking
+// also clears the flag on all other videos, which keeps the state simple:
+// the history only offers "mark complete" again after the mark is cleared.
+export function isVideoCompleted(
+  entries: Pick<VideoNote, 'completed' | 'updatedAt' | 'timestamp'>[]
+): boolean {
+  const newest = getNewestEntry(entries);
+  return newest?.completed === true;
+}
+
+// When a video was marked as fully watched, or null when it is unfinished.
+export function getCompletedAt(
+  entries: Pick<VideoNote, 'completed' | 'completedAt' | 'updatedAt' | 'timestamp'>[]
+): Date | null {
+  const completedAt = getNewestEntry(entries)?.completedAt;
+  if (!completedAt) return null;
+  const date = new Date(completedAt);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+function getNewestEntry<T extends Pick<VideoNote, 'updatedAt' | 'timestamp'>>(entries: T[]): T | null {
+  let newest: T | null = null;
+  let newestTime = -1;
+  for (const entry of entries) {
+    const updated = new Date(entry.updatedAt || 0).getTime();
+    const saved = new Date(entry.timestamp || 0).getTime();
+    const time = Math.max(isNaN(updated) ? 0 : updated, isNaN(saved) ? 0 : saved);
+    if (time > newestTime) {
+      newest = entry;
+      newestTime = time;
+    }
+  }
+  return newest;
 }
 
 // Helper to format duration

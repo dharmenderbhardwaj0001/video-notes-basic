@@ -1,5 +1,5 @@
 <div class="page-container">
-  <app-header></app-header>
+  <app-header actionLabel="Add Video" actionIcon="add" [onAction]="addVideoAction"></app-header>
 
   <div class="page-content">
     <div class="category-videos-container">
@@ -14,7 +14,16 @@
           <h2>{{ category }}</h2>
           <p>{{ videos.length }} video{{ videos.length === 1 ? '' : 's' }} &bull; Latest added first</p>
         </div>
-        <button class="google-btn google-btn-secondary" (click)="goToCategories()">All Categories</button>
+        <div class="heading-actions">
+          <button class="google-btn google-btn-secondary" (click)="goToCategories()">All Categories</button>
+          <button class="google-btn" (click)="openAddVideoDialog()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+            </svg>
+            Add Video
+          </button>
+        </div>
       </div>
 
       <div class="category-video-list" *ngIf="videos.length > 0; else noVideos">
@@ -36,9 +45,134 @@
         <div class="empty-state">
           <h3>No videos in this category</h3>
           <p>This category no longer has any saved videos.</p>
-          <button class="google-btn" (click)="goToCategories()">Back to Categories</button>
+          <button class="google-btn" (click)="openAddVideoDialog()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M0 0h24v24H0V0z" fill="none"/>
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+            </svg>
+            Add Video to {{ category }}
+          </button>
         </div>
       </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- Add Video Dialog -->
+<div class="google-dialog" *ngIf="showVideoDialog">
+  <div class="dialog-overlay" (click)="closeVideoDialog()"></div>
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <h3 class="dialog-title">Add New Video</h3>
+      <button class="dialog-close" (click)="closeVideoDialog()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <form (ngSubmit)="saveVideo()">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="google-input-label" for="videoTitle">Video Title</label>
+            <input
+              type="text"
+              id="videoTitle"
+              class="google-input"
+              [(ngModel)]="currentVideo.videoTitle"
+              name="videoTitle"
+              placeholder="Enter video title"
+            />
+          </div>
+          <div class="form-group">
+            <label class="google-input-label" for="videoUrl">Video URL</label>
+            <input
+              type="url"
+              id="videoUrl"
+              class="google-input"
+              [(ngModel)]="currentVideo.videoUrl"
+              name="videoUrl"
+              placeholder="Enter video URL (optional)"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="google-input-label">Category</label>
+          <app-category-select
+            [categories]="categoryOptions"
+            placeholder="Choose or create a category"
+            [(ngModel)]="currentVideo.category"
+            name="category"
+          ></app-category-select>
+        </div>
+        <div class="form-group">
+          <label class="google-input-label">Position</label>
+          <div class="position-inputs">
+            <div class="position-field">
+              <input
+                type="number"
+                id="positionHours"
+                class="google-input"
+                [(ngModel)]="positionHours"
+                (ngModelChange)="updatePosition()"
+                name="positionHours"
+                placeholder="0"
+                min="0"
+              />
+              <span class="position-unit">hh</span>
+            </div>
+            <span class="position-colon">:</span>
+            <div class="position-field">
+              <input
+                type="number"
+                id="positionMinutes"
+                class="google-input"
+                [(ngModel)]="positionMinutes"
+                (ngModelChange)="updatePosition()"
+                name="positionMinutes"
+                placeholder="16"
+                min="0"
+                max="59"
+              />
+              <span class="position-unit">mm</span>
+            </div>
+            <span class="position-colon">:</span>
+            <div class="position-field">
+              <input
+                type="number"
+                id="positionSeconds"
+                class="google-input"
+                [(ngModel)]="positionSeconds"
+                (ngModelChange)="updatePosition()"
+                name="positionSeconds"
+                placeholder="45"
+                min="0"
+                max="59"
+              />
+              <span class="position-unit">ss</span>
+            </div>
+          </div>
+          <span class="position-preview">Position: {{ formatDuration(currentVideo.position || 0) }}</span>
+        </div>
+        <div class="form-group">
+          <label class="google-input-label" for="notes">Notes</label>
+          <textarea
+            id="notes"
+            class="google-input google-input-textarea"
+            [(ngModel)]="currentVideo.notes"
+            name="notes"
+            placeholder="Enter your notes..."
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="google-btn google-btn-secondary" (click)="closeVideoDialog()">
+            Cancel
+          </button>
+          <button type="submit" class="google-btn" [disabled]="!isFormValid()">
+            Add Video
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
