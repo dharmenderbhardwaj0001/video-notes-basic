@@ -1,0 +1,104 @@
+<div class="page-container">
+  <app-header></app-header>
+
+  <div class="page-content">
+    <div class="exercises-container">
+      <div class="breadcrumb">
+        <button (click)="goToCategories()">Categories</button>
+        <span>/</span>
+        <strong>Exercises</strong>
+      </div>
+
+      <div class="page-heading">
+        <div>
+          <h2>Exercises</h2>
+          <p>
+            {{ cards.length }} video{{ cards.length === 1 ? '' : 's' }} with exercises
+            <ng-container *ngIf="pendingCount > 0">
+              &bull; {{ pendingCount }} pending
+            </ng-container>
+          </p>
+        </div>
+
+        <div class="heading-actions">
+          <!-- Filter dropdown -->
+          <div class="filter-dropdown">
+            <button
+              type="button"
+              class="google-btn google-btn-secondary filter-btn"
+              (click)="showFilterMenu = !showFilterMenu"
+              [attr.aria-expanded]="showFilterMenu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" fill="currentColor"/>
+              </svg>
+              {{ activeFilterLabel }}
+              <svg class="filter-caret" xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z" fill="currentColor"/>
+              </svg>
+            </button>
+
+            <div class="filter-menu" *ngIf="showFilterMenu">
+              <button
+                type="button"
+                class="filter-option"
+                *ngFor="let option of filters"
+                [class.is-active]="option.id === filter"
+                (click)="selectFilter(option.id)"
+              >
+                <span class="filter-check" *ngIf="option.id === filter">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                    <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                  </svg>
+                </span>
+                {{ option.label }}
+              </button>
+            </div>
+          </div>
+
+          <button class="google-btn google-btn-secondary" (click)="goHome()">Dashboard</button>
+        </div>
+      </div>
+
+      <div class="filter-backdrop" *ngIf="showFilterMenu" (click)="showFilterMenu = false"></div>
+
+      <div class="exercise-video-list" *ngIf="filteredCards.length > 0; else noExercises">
+        <button *ngFor="let card of filteredCards" class="exercise-video-card" (click)="openExercises(card)">
+          <img [src]="getThumbnail(card.video)" [alt]="card.video.videoTitle || 'Video thumbnail'" loading="lazy" />
+          <span class="video-info">
+            <strong>{{ card.video.videoTitle || 'Untitled Video' }}</strong>
+            <span class="video-url">{{ card.video.videoUrl || 'No URL' }}</span>
+            <span class="video-meta">
+              <span class="progress-chip" [class.is-complete]="card.progress === 100">
+                {{ card.progress }}% completed
+              </span>
+              <span>{{ card.completed }} of {{ card.total }} point{{ card.total === 1 ? '' : 's' }}</span>
+              <span class="video-date">Updated {{ formatDate(card.video.updatedAt || card.video.timestamp) }}</span>
+            </span>
+            <span class="progress-track">
+              <span class="progress-fill" [class.is-complete]="card.progress === 100" [style.width.%]="card.progress"></span>
+            </span>
+          </span>
+          <span class="video-arrow">&rarr;</span>
+        </button>
+      </div>
+
+      <ng-template #noExercises>
+        <div class="empty-state">
+          <ng-container *ngIf="cards.length === 0; else nothingMatches">
+            <h3>No exercises yet</h3>
+            <p>Open a video's watch history and use <strong>Add Exercises</strong> to write points 1 to 20.</p>
+            <button class="google-btn" (click)="goToCategories()">Browse Categories</button>
+          </ng-container>
+          <ng-template #nothingMatches>
+            <h3>Nothing matches this filter</h3>
+            <p>No video has {{ activeFilterLabel.toLowerCase() }} right now.</p>
+            <button class="google-btn google-btn-secondary" (click)="selectFilter('all')">Show all videos</button>
+          </ng-template>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

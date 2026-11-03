@@ -42,6 +42,10 @@ export class CategoriesComponent implements OnInit {
     this.router.navigate(['/categories', category]);
   }
 
+  openExercises(): void {
+    this.router.navigate(['/exercises']);
+  }
+
   goHome(): void {
     this.router.navigate(['/dashboard']);
   }

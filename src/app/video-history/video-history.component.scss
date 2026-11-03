@@ -1,4 +1,4 @@
-@use '../shared/google-theme' as *;
+﻿@use '../shared/google-theme' as *;
 
 .history-container {
   max-width: 900px;
@@ -188,6 +188,51 @@
   gap: 16px;
 }
 
+// Exercises summary card
+.exercise-card {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  padding: 14px 16px; margin-bottom: 24px;
+  border: 1px solid $google-border; border-radius: var(--radius-md);
+  background: $google-white; box-shadow: var(--shadow-sm);
+  text-align: left; cursor: pointer;
+  transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease);
+
+  &:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+  .exercise-card-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius-md);
+    background: color-mix(in srgb, $google-blue 10%, transparent); color: $google-blue;
+  }
+
+  .exercise-card-body { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 5px; }
+
+  .exercise-card-title {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    color: $google-text; font-size: 15px; font-weight: 500;
+  }
+
+  .exercise-card-arrow { color: $google-blue; font-size: 20px; }
+}
+
+.exercise-card-sub { color: $google-text-secondary; font-size: 12px; }
+
+.exercise-card-percent {
+  padding: 2px 8px; border-radius: 999px; background: $google-light-grey; font-size: 11px;
+}
+
+.exercise-card-percent.is-complete { color: color-mix(in srgb, $google-green 70%, #000 12%); }
+
+.exercise-progress-track {
+  display: block; height: 6px; background: $google-light-grey;
+  border-radius: 999px; overflow: hidden;
+}
+
+.exercise-progress-fill {
+  display: block; height: 100%; background: $google-blue;
+  transition: width var(--speed) var(--ease);
+  &.is-complete { background: $google-green; }
+}
 .history-day {
   display: flex;
   gap: 16px;

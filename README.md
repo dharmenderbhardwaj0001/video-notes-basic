@@ -16,6 +16,7 @@ Everything runs on your machine. No account, no cloud, no tracking.
 - 🏆 **Top Videos** — leaderboard of your most-watched videos
 - 📅 **Calendar history** — year → month → day navigation
 - 🕐 **Per-video history** — track every session for a video
+- ✅ **Exercises** — write up to 20 practice points per video, tick them off, and reach 100% when all are done
 - 🎨 **4 themes** — Light, Dark, Light Version 2, and Dark Version 2
 
 ## Screenshots

@@ -4,6 +4,7 @@ import { StorageService } from '../storage.service';
 import { ProgressStats, MotivationMessage, formatDuration, WeeklyProgress, DailyProgress, VideoNote, TopVideoNote, getVideoThumbnail, getYouTubeThumbnailUrl } from '../models/video-note.model';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
+import { ProjectNotesService } from '../project-notes/services/project-notes.service';
 
 @Component({
   selector: 'app-welcome',
@@ -19,6 +20,7 @@ export class WelcomeComponent implements OnInit {
   todayDate: string = '';
   yesterdayDate: string = '';
   weekRange: string = '';
+  projectCount: number = 0;
   
   progressStats: ProgressStats | null = null;
   motivationMessages: MotivationMessage[] = [];
@@ -36,11 +38,20 @@ export class WelcomeComponent implements OnInit {
   
   private dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  constructor(private router: Router, private storage: StorageService, private route: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private storage: StorageService,
+    private route: ActivatedRoute,
+    private projectNotes: ProjectNotesService
+  ) {}
 
   ngOnInit(): void {
     this.loadInitialData();
     this.loadProgressStats();
+    this.projectCount = this.projectNotes.getSummaries().length;
+    this.projectNotes.whenLoaded().then(() => {
+      this.projectCount = this.projectNotes.getSummaries().length;
+    });
     
     // Auto-refresh progress every 30 seconds
     setInterval(() => this.loadProgressStats(), 30000);
@@ -174,6 +185,14 @@ export class WelcomeComponent implements OnInit {
 
   openCategories(): void {
     this.router.navigate(['/categories']);
+  }
+
+  openProjects(): void {
+    this.router.navigate(['/projects']);
+  }
+
+  openExercises(): void {
+    this.router.navigate(['/exercises']);
   }
 
   changeLatestVideoLimit(limit: string): void {

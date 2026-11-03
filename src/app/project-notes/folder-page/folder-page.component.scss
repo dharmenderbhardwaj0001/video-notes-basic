@@ -1,0 +1,460 @@
+@use '../../shared/google-theme' as *;
+
+.folder-shell {
+  flex: 1;
+  padding: 16px 24px 32px;
+  min-height: 0;
+}
+
+// ---------- Top bar ----------
+
+.breadcrumb-bar {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.folder-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  height: 36px;
+  border: 1px solid $google-border;
+  border-radius: 999px;
+  background-color: $google-white;
+  color: $google-text-secondary;
+
+  &:focus-within {
+    border-color: $google-blue;
+    box-shadow: 0 0 0 3px color-mix(in srgb, $google-blue 16%, transparent);
+  }
+
+  input {
+    border: none;
+    background: transparent;
+    width: 150px;
+    font-size: 13px;
+    color: $google-text;
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: $google-text-secondary;
+    }
+  }
+}
+
+.search-clear {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $google-text-secondary;
+
+  &:hover {
+    background-color: $google-hover;
+  }
+}
+
+.tool-btn {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid $google-border;
+  border-radius: 999px;
+  background-color: $google-white;
+  color: $google-text-secondary;
+  font-size: 12px;
+  font-weight: 500;
+
+  &:hover {
+    background-color: $google-hover;
+    color: $google-text;
+  }
+}
+
+// ---------- Heading ----------
+
+.folder-heading {
+  max-width: 1200px;
+  margin: 0 auto 12px;
+}
+
+.folder-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+  color: $google-text;
+  overflow-wrap: anywhere;
+}
+
+.folder-meta {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: $google-text-secondary;
+}
+
+// ---------- Document ----------
+// One vertically scrollable page. The inner canvas keeps a width that
+// grows with the nesting depth, so the page also scrolls horizontally
+// once points are nested deep enough to need it.
+
+.document-scroll {
+  overflow: auto;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-md);
+  background-color: $google-white;
+  box-shadow: var(--shadow-sm);
+  min-height: 380px;
+  max-height: calc(100vh - 300px);
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+  }
+}
+
+.document-canvas {
+  position: relative;
+  padding: 10px 14px 16px;
+  min-height: 100%;
+}
+
+.document-ruler {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  pointer-events: none;
+
+  span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: color-mix(in srgb, $google-border 35%, transparent);
+  }
+}
+
+.point-list {
+  position: relative;
+}
+
+// ---------- Point rows ----------
+
+.point-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 4px 10px 4px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.12s var(--ease), border-color 0.12s var(--ease), box-shadow 0.12s var(--ease);
+
+  & + .point-row {
+    margin-top: 2px;
+  }
+
+  &:hover {
+    background-color: color-mix(in srgb, $google-blue 4%, transparent);
+
+    .point-actions {
+      opacity: 1;
+    }
+  }
+
+  &.point-row-match {
+    background-color: color-mix(in srgb, $google-yellow 16%, transparent);
+  }
+
+  &.point-row-hidden {
+    display: none;
+  }
+
+  &.point-row-dragging {
+    opacity: 0.4;
+  }
+
+  &.drop-before::before,
+  &.drop-after::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: $google-blue;
+  }
+
+  &.drop-before::before {
+    top: -2px;
+  }
+
+  &.drop-after::after {
+    bottom: -2px;
+  }
+
+  &.drop-inside {
+    border-color: $google-blue;
+    background-color: color-mix(in srgb, $google-blue 10%, transparent);
+  }
+}
+
+// Connector guides: one vertical line per ancestor level.
+.guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+
+  &-line {
+    background-color: $google-border;
+  }
+}
+
+.guide-elbow {
+  position: absolute;
+  top: 0;
+  bottom: 50%;
+  width: 1px;
+  background-color: $google-border;
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 11px;
+    height: 1px;
+    background-color: $google-border;
+  }
+}
+
+.drag-handle {
+  flex-shrink: 0;
+  width: 20px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in srgb, $google-text-secondary 45%, transparent);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.12s var(--ease);
+
+  .point-row:hover & {
+    opacity: 1;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.collapse-toggle {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: $google-text-secondary;
+
+  svg {
+    transition: transform 0.15s var(--ease);
+
+    &.rotated {
+      transform: rotate(90deg);
+    }
+  }
+
+  &:hover {
+    background-color: $google-hover;
+    color: $google-text;
+  }
+}
+
+.leaf-dot {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: color-mix(in srgb, $google-blue 55%, transparent);
+  }
+}
+
+.point-title {
+  flex: 1;
+  min-width: 160px;
+  font-size: 14px;
+  font-weight: 500;
+  color: $google-text;
+  overflow-wrap: anywhere;
+}
+
+.point-title-input {
+  flex: 1;
+  min-width: 160px;
+  padding: 5px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: $google-text;
+  background-color: $google-white;
+  border: 1px solid $google-blue;
+  border-radius: var(--radius-xs);
+  box-shadow: 0 0 0 3px color-mix(in srgb, $google-blue 16%, transparent);
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.point-badges {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background-color: $google-grey;
+  color: $google-text-secondary;
+  font-size: 11px;
+  white-space: nowrap;
+
+  &-doc {
+    background-color: color-mix(in srgb, $google-green 12%, transparent);
+    color: $google-green;
+  }
+}
+
+.point-actions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.12s var(--ease);
+  padding-left: 4px;
+}
+
+.point-action {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $google-text-secondary;
+
+  &:hover {
+    background-color: $google-hover;
+    color: $google-text;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+    background: none;
+  }
+
+  &-danger:hover {
+    color: $google-red;
+  }
+}
+
+// ---------- Footer of the document ----------
+
+.add-point-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 1px dashed $google-border;
+  border-radius: var(--radius-sm);
+  color: $google-blue;
+  font-size: 13px;
+  font-weight: 500;
+
+  &:hover {
+    border-color: $google-blue;
+    background-color: color-mix(in srgb, $google-blue 4%, transparent);
+  }
+}
+
+.hint-line {
+  margin: 12px 0 0;
+  font-size: 11px;
+  color: $google-text-secondary;
+}
+
+.empty-state {
+  padding: 48px 24px;
+  text-align: center;
+
+  h3 {
+    margin: 0 0 8px;
+    color: $google-text;
+  }
+
+  p {
+    margin: 0 auto 20px;
+    max-width: 460px;
+    color: $google-text-secondary;
+  }
+}
+
+@media (max-width: 760px) {
+  .folder-shell {
+    padding: 12px 12px 24px;
+  }
+
+  .point-actions {
+    opacity: 1;
+  }
+
+  .drag-handle {
+    display: none;
+  }
+
+  .document-scroll {
+    max-height: none;
+  }
+}

@@ -1,0 +1,153 @@
+<div class="page-container">
+  <app-header
+    [actionLabel]="'New folder'"
+    [actionIcon]="'add'"
+    [onAction]="createFolderAction"></app-header>
+
+  <div class="page-content">
+    <div class="project-container">
+      <div class="breadcrumb">
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goProjects()">Projects</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span>{{ project?.name || 'Project' }}</span>
+        </div>
+      </div>
+
+      <ng-container *ngIf="project; else notFound">
+        <div class="project-hero">
+          <div class="hero-mark" [style.background-color]="accent">
+            {{ project.name.charAt(0).toUpperCase() }}
+          </div>
+          <div class="hero-text">
+            <h2 class="project-title">
+              {{ project.name }}
+              <button class="hero-edit" (click)="renameProject()" title="Rename project" aria-label="Rename project">
+                <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                </svg>
+              </button>
+            </h2>
+            <p class="project-summary">{{ summaryLabel }}</p>
+            <p class="project-description" *ngIf="project.description">{{ project.description }}</p>
+          </div>
+          <button class="google-btn" (click)="openCreateFolder()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+            </svg>
+            New folder
+          </button>
+        </div>
+
+        <div class="folder-grid" *ngIf="sortedFolders.length > 0; else noFolders">
+          <div
+            *ngFor="let folder of sortedFolders; let i = index"
+            class="folder-card"
+            (click)="openFolder(folder)"
+            (keydown.enter)="openFolder(folder)"
+            tabindex="0"
+            role="button"
+          >
+            <div class="folder-card-top">
+              <span class="folder-icon" [style.color]="accent">
+                <svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 0 24 24" width="26">
+                  <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" fill="currentColor"/>
+                </svg>
+              </span>
+              <div class="folder-actions">
+                <button class="card-icon-btn" (click)="moveFolder(folder, -1, $event)" [disabled]="i === 0" title="Move up" aria-label="Move folder up">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                    <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="card-icon-btn" (click)="moveFolder(folder, 1, $event)" [disabled]="i === sortedFolders.length - 1" title="Move down" aria-label="Move folder down">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                    <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="card-icon-btn" (click)="openEditFolder(folder, $event)" title="Edit folder" aria-label="Edit folder">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="card-icon-btn card-icon-danger" (click)="deleteFolder(folder, $event)" title="Delete folder" aria-label="Delete folder">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <h3 class="folder-name">{{ folder.name }}</h3>
+            <p class="folder-description" *ngIf="folder.description">{{ folder.description }}</p>
+            <div class="folder-card-bottom">
+              <span class="folder-points">{{ nodeCount(folder) }} {{ nodeCount(folder) === 1 ? 'point' : 'points' }}</span>
+              <span class="folder-updated">{{ updatedLabel(folder) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noFolders>
+          <div class="empty-state">
+            <h3>No folders yet</h3>
+            <p>Create a folder for each area of this project (for example "APIs", "Requirements" or "Docs").</p>
+            <button class="google-btn" (click)="openCreateFolder()">Create first folder</button>
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <ng-template #notFound>
+        <div class="empty-state">
+          <h3>Project not found</h3>
+          <p>It may have been deleted, or the link is wrong.</p>
+          <button class="google-btn" (click)="goProjects()">Back to projects</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- Create / edit folder -->
+<div class="google-dialog" *ngIf="showFolderDialog">
+  <div class="dialog-overlay" (click)="closeFolderDialog()"></div>
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <h3 class="dialog-title">{{ folderForm.id ? 'Edit folder' : 'New folder' }}</h3>
+      <button class="dialog-close" (click)="closeFolderDialog()" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <label class="google-input-label" for="folderName">Folder name</label>
+      <input
+        id="folderName"
+        class="google-input"
+        type="text"
+        [(ngModel)]="folderForm.name"
+        (keydown)="onKeydown($event)"
+        placeholder="e.g. Authentication API"
+        autocomplete="off"
+        autofocus
+      />
+
+      <label class="google-input-label dialog-field" for="folderDescription">Description (optional)</label>
+      <textarea
+        id="folderDescription"
+        class="google-input google-input-textarea"
+        rows="3"
+        [(ngModel)]="folderForm.description"
+        placeholder="What belongs in this folder?"
+      ></textarea>
+    </div>
+    <div class="dialog-actions">
+      <button class="google-btn google-btn-secondary" (click)="closeFolderDialog()">Cancel</button>
+      <button class="google-btn" [disabled]="!folderForm.name.trim()" (click)="saveFolder()">
+        {{ folderForm.id ? 'Save' : 'Create folder' }}
+      </button>
+    </div>
+  </div>
+</div>

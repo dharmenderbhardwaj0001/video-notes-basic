@@ -1,0 +1,196 @@
+<div class="page-container">
+  <app-header [actionLabel]="'New project'" [actionIcon]="'add'" [onAction]="createAction"></app-header>
+
+  <div class="page-content">
+    <div class="projects-container">
+      <div class="page-heading">
+        <div class="heading-text">
+          <h2>Projects</h2>
+          <p>Project folders for your APIs, designs and documentation.</p>
+        </div>
+        <div class="heading-actions">
+          <input
+            type="search"
+            class="google-input project-search"
+            [(ngModel)]="search"
+            placeholder="Search projects"
+            aria-label="Search projects"
+          />
+          <button class="google-btn" (click)="openCreate()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+            </svg>
+            New project
+          </button>
+        </div>
+      </div>
+
+      <div class="stats-strip" *ngIf="projects.length > 0">
+        <div class="stat-chip">
+          <span class="stat-value">{{ projects.length }}</span>
+          <span class="stat-label">{{ projects.length === 1 ? 'Project' : 'Projects' }}</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-value">{{ totalFolders }}</span>
+          <span class="stat-label">{{ totalFolders === 1 ? 'Folder' : 'Folders' }}</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-value">{{ totalPoints }}</span>
+          <span class="stat-label">{{ totalPoints === 1 ? 'Point' : 'Points' }}</span>
+        </div>
+      </div>
+
+      <div class="project-grid" *ngIf="visibleProjects.length > 0; else emptyState">
+        <div
+          *ngFor="let project of visibleProjects"
+          class="project-card"
+          (click)="openProject(project)"
+          tabindex="0"
+          role="button"
+          (keydown.enter)="openProject(project)"
+        >
+          <div class="project-card-top">
+            <span class="project-mark" [style.background-color]="project.color">
+              {{ project.name.charAt(0).toUpperCase() }}
+            </span>
+            <div class="project-actions">
+              <button
+                class="card-icon-btn"
+                (click)="openEdit(project, $event)"
+                title="Edit project"
+                aria-label="Edit project"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                </svg>
+              </button>
+              <button
+                class="card-icon-btn card-icon-danger"
+                (click)="delete(project, $event)"
+                title="Delete project"
+                aria-label="Delete project"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <h3 class="project-name">{{ project.name }}</h3>
+          <p class="project-description" *ngIf="project.description; else noDescription">
+            {{ project.description }}
+          </p>
+          <ng-template #noDescription>
+            <p class="project-description project-description-empty">No description</p>
+          </ng-template>
+
+          <div class="project-meta">
+            <span class="meta-pill">
+              <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 0 24 24" width="15">
+                <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" fill="currentColor"/>
+              </svg>
+              {{ folderLabel(project.folderCount) }}
+            </span>
+            <span class="meta-pill">
+              <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 0 24 24" width="15">
+                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" fill="currentColor"/>
+              </svg>
+              {{ pointLabel(project.nodeCount) }}
+            </span>
+          </div>
+
+          <div class="project-footer">
+            <span class="project-updated">Edited {{ updatedLabel(project) }}</span>
+            <span class="project-open">
+              Open
+              <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" fill="currentColor"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="42" viewBox="0 0 24 24" width="42">
+              <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 *ngIf="projects.length === 0">No projects yet</h3>
+          <h3 *ngIf="projects.length > 0">No matching projects</h3>
+          <p *ngIf="projects.length === 0">
+            Create a project to keep folders of API notes, requirements and documentation in one place.
+          </p>
+          <p *ngIf="projects.length > 0">Try a different search term.</p>
+          <button class="google-btn" *ngIf="projects.length === 0" (click)="openCreate()">Create your first project</button>
+          <button class="google-btn google-btn-secondary" *ngIf="projects.length > 0" (click)="search = ''">Clear search</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- Create / edit project -->
+<div class="google-dialog" *ngIf="showDialog">
+  <div class="dialog-overlay" (click)="closeDialog()"></div>
+  <div class="dialog-content project-dialog">
+    <div class="dialog-header">
+      <h3 class="dialog-title">{{ form.id ? 'Edit project' : 'New project' }}</h3>
+      <button class="dialog-close" (click)="closeDialog()" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <label class="google-input-label" for="projectName">Project name</label>
+      <input
+        id="projectName"
+        class="google-input"
+        type="text"
+        [(ngModel)]="form.name"
+        (keydown)="onKeydown($event)"
+        placeholder="e.g. Payments Platform"
+        autocomplete="off"
+        autofocus
+      />
+
+      <label class="google-input-label dialog-field" for="projectDescription">Description (optional)</label>
+      <textarea
+        id="projectDescription"
+        class="google-input google-input-textarea"
+        rows="3"
+        [(ngModel)]="form.description"
+        placeholder="What is this project about?"
+      ></textarea>
+
+      <span class="google-input-label dialog-field">Color</span>
+      <div class="color-row">
+        <button
+          *ngFor="let color of colors"
+          type="button"
+          class="color-swatch"
+          [class.color-swatch-active]="form.color === color"
+          [style.background-color]="color"
+          (click)="form.color = color"
+          [attr.aria-label]="'Use color ' + color"
+        >
+          <svg *ngIf="form.color === color" xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button class="google-btn google-btn-secondary" (click)="closeDialog()">Cancel</button>
+      <button class="google-btn" [disabled]="!form.name.trim()" (click)="save()">
+        {{ form.id ? 'Save' : 'Create project' }}
+      </button>
+    </div>
+  </div>
+</div>

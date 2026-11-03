@@ -1,0 +1,391 @@
+@use '../shared/google-theme' as *;
+
+.exercise-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+
+  .breadcrumb-link {
+    color: $google-blue;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .breadcrumb-separator {
+    color: $google-text-secondary;
+  }
+
+  .breadcrumb-item > span:not(.breadcrumb-link) {
+    color: $google-text-secondary;
+  }
+}
+
+.exercise-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background-color: $google-white;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--speed) var(--ease), border-color var(--speed) var(--ease);
+  margin-bottom: 24px;
+
+  &.is-completed {
+    border-color: color-mix(in srgb, $google-green 45%, transparent);
+  }
+
+  .exercise-thumb-wrap {
+    position: relative;
+    flex-shrink: 0;
+    line-height: 0;
+
+    .exercise-thumb {
+      width: 160px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      background-color: $google-light-grey;
+    }
+
+    .completed-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      background-color: color-mix(in srgb, $google-green 55%, #000 15%);
+      color: #fff;
+
+      svg {
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+      }
+    }
+  }
+
+  .exercise-info {
+    min-width: 0;
+    flex: 1;
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 500;
+      color: $google-text;
+      margin: 0 0 4px;
+      word-break: break-word;
+    }
+
+    .exercise-url {
+      font-size: 13px;
+      color: $google-text-secondary;
+      margin: 0 0 8px;
+      word-break: break-all;
+    }
+
+    .exercise-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 10px;
+    }
+
+    .exercise-category {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: $google-light-grey;
+      color: $google-blue;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .exercise-count {
+      font-size: 12px;
+      color: $google-text-secondary;
+    }
+  }
+
+  .exercise-actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+
+    .google-btn {
+      margin: 0;
+      white-space: nowrap;
+    }
+  }
+}
+
+.progress-badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background-color: $google-light-grey;
+  color: $google-text-secondary;
+  font-size: 11px;
+  font-weight: 500;
+
+  &.is-complete {
+    background-color: color-mix(in srgb, $google-green 14%, transparent);
+    color: color-mix(in srgb, $google-green 70%, #000 12%);
+  }
+}
+
+.progress-track {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background-color: $google-light-grey;
+  overflow: hidden;
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background-color: $google-blue;
+  transition: width var(--speed) var(--ease);
+
+  &.is-complete {
+    background-color: $google-green;
+  }
+}
+
+// "All exercises completed" banner
+.completed-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  background-color: color-mix(in srgb, $google-green 8%, transparent);
+  border: 1px solid color-mix(in srgb, $google-green 34%, transparent);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: $google-text;
+
+  svg {
+    color: $google-green;
+    flex-shrink: 0;
+  }
+}
+
+.points-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: $google-text;
+  }
+
+  .google-btn {
+    margin: 0;
+  }
+}
+
+.points-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.point-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-md);
+  background-color: $google-white;
+  box-shadow: var(--shadow-sm);
+  color: $google-text;
+  text-align: left;
+  font-family: $google-font;
+  cursor: pointer;
+  transition: box-shadow var(--speed) var(--ease), border-color var(--speed) var(--ease), transform var(--speed) var(--ease);
+
+  &:hover {
+    border-color: color-mix(in srgb, $google-blue 35%, transparent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .point-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    border: 2px solid color-mix(in srgb, $google-blue 45%, transparent);
+    border-radius: 50%;
+    color: transparent;
+    transition: background-color var(--speed) var(--ease), border-color var(--speed) var(--ease);
+  }
+
+  .point-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .point-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: $google-text-secondary;
+  }
+
+  .point-body {
+    font-size: 14px;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+
+  &.is-completed {
+    border-color: color-mix(in srgb, $google-green 40%, transparent);
+    background-color: color-mix(in srgb, $google-green 4%, $google-white);
+
+    .point-check {
+      background-color: $google-green;
+      border-color: $google-green;
+      color: $google-on-accent;
+    }
+
+    .point-label {
+      color: color-mix(in srgb, $google-green 70%, #000 12%);
+    }
+
+    .point-body {
+      color: $google-text-secondary;
+      text-decoration: line-through;
+    }
+  }
+}
+
+// Editor
+.exercise-editor {
+  padding: 20px;
+  background-color: $google-white;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+
+  .editor-heading {
+    margin-bottom: 16px;
+
+    h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 500;
+      color: $google-text;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: $google-text-secondary;
+    }
+  }
+
+  .editor-points {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .editor-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .point-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 38px;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: $google-text-secondary;
+  }
+
+  .editor-input {
+    resize: vertical;
+    min-height: 38px;
+    padding: 8px 12px;
+    line-height: 20px;
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .editor-hint {
+    font-size: 12px;
+    color: $google-text-secondary;
+  }
+
+  .editor-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.empty-state {
+  padding: 56px 24px;
+  border: 1px dashed $google-border;
+  border-radius: var(--radius-md);
+  background: $google-white;
+  text-align: center;
+
+  h3 { margin: 0 0 8px; color: $google-text; }
+  p { margin: 0 0 24px; color: $google-text-secondary; }
+}
+
+@media (max-width: 720px) {
+  .exercise-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .exercise-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+}

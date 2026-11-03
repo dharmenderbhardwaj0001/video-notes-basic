@@ -1,0 +1,381 @@
+@use '../../shared/google-theme' as *;
+
+.node-dialog .node-dialog-content {
+  max-width: 760px;
+  width: min(760px, 94vw);
+  height: min(760px, 88vh);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.node-dialog-header {
+  position: sticky;
+  top: 0;
+  background-color: $google-white;
+  z-index: 2;
+}
+
+.node-heading {
+  min-width: 0;
+
+  .node-path {
+    display: block;
+    font-size: 12px;
+    color: $google-text-secondary;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 560px;
+  }
+}
+
+.node-dialog .node-dialog-body {
+  overflow-y: auto;
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 20px 24px 8px;
+}
+
+.node-title-input {
+  font-size: 18px;
+  font-weight: 500;
+  padding: 12px;
+}
+
+.field {
+  margin-top: 18px;
+}
+
+.field-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+
+  .google-input-label {
+    margin-bottom: 0;
+  }
+}
+
+.field-hint {
+  font-size: 11px;
+  color: $google-text-secondary;
+}
+
+.field-error {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: $google-red;
+}
+
+.description-input {
+  min-height: 76px;
+  resize: vertical;
+}
+
+// ---------- Notes ----------
+
+.note-editor {
+  border: 1px solid $google-border;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  background-color: $google-white;
+  max-height: 280px;
+  overflow-y: auto;
+
+  &:focus-within {
+    border-color: $google-blue;
+    box-shadow: 0 0 0 3px color-mix(in srgb, $google-blue 18%, transparent);
+  }
+}
+
+.note-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.note-check {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 5px;
+  border: 1.5px solid $google-border;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $google-on-accent;
+  background: transparent;
+  transition: border-color var(--speed) var(--ease), background-color var(--speed) var(--ease);
+
+  &:hover {
+    border-color: $google-blue;
+  }
+
+  &-done {
+    background-color: $google-blue;
+    border-color: $google-blue;
+  }
+}
+
+.note-line-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  padding: 4px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: $google-text;
+  overflow: hidden;
+  min-height: 28px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: $google-text-secondary;
+  }
+
+  &-done {
+    text-decoration: line-through;
+    color: $google-text-secondary;
+  }
+}
+
+// ---------- Links ----------
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.link-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: var(--radius-xs);
+  background-color: color-mix(in srgb, $google-blue 5%, transparent);
+
+  &:hover {
+    background-color: color-mix(in srgb, $google-blue 9%, transparent);
+  }
+}
+
+.link-icon {
+  color: $google-blue;
+  display: flex;
+}
+
+.link-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+
+  &:hover .link-label {
+    text-decoration: underline;
+  }
+}
+
+.link-label {
+  font-size: 14px;
+  color: $google-blue;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-url {
+  font-size: 11px;
+  color: $google-text-secondary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-add {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr auto;
+  gap: 8px;
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.icon-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $google-text-secondary;
+
+  &:hover {
+    background-color: $google-hover;
+    color: $google-red;
+  }
+}
+
+// ---------- Images ----------
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.image-card {
+  position: relative;
+  margin: 0;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: $google-white;
+
+  .image-thumb {
+    display: block;
+    width: 100%;
+    height: 110px;
+    padding: 0;
+    background-color: $google-light-grey;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .image-caption {
+    width: 100%;
+    border: none;
+    border-top: 1px solid $google-border;
+    padding: 6px 8px;
+    font-size: 12px;
+    background: transparent;
+    color: $google-text;
+
+    &:focus {
+      outline: none;
+      background-color: $google-hover;
+    }
+  }
+
+  .image-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: color-mix(in srgb, #000 55%, transparent);
+    color: #fff;
+
+    &:hover {
+      background-color: color-mix(in srgb, $google-red 85%, #000);
+    }
+  }
+}
+
+.image-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px dashed $google-border;
+  border-radius: var(--radius-sm);
+  color: $google-blue;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $google-blue;
+    background-color: color-mix(in srgb, $google-blue 4%, transparent);
+  }
+
+  input {
+    display: none;
+  }
+}
+
+.image-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background-color: color-mix(in srgb, #000 78%, transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px;
+  cursor: zoom-out;
+
+  img {
+    max-width: 100%;
+    max-height: 82vh;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .image-preview-caption {
+    color: #fff;
+    font-size: 13px;
+  }
+}
+
+// ---------- Footer ----------
+
+.node-dialog-actions {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  background-color: $google-white;
+}
+
+.actions-spacer {
+  flex: 1;
+}
+
+.saved-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: $google-text-secondary;
+
+  svg {
+    color: $google-green;
+  }
+}
+
+.google-btn-danger-outline {
+  background-color: transparent;
+  color: $google-red;
+  border: 1px solid color-mix(in srgb, $google-red 40%, transparent);
+
+  &:hover {
+    background-color: color-mix(in srgb, $google-red 8%, transparent);
+    box-shadow: none;
+  }
+}

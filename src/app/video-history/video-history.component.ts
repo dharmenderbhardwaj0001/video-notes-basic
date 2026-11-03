@@ -6,6 +6,7 @@ import {
   getVideoThumbnail, getYouTubeThumbnailUrl, getVideoProgress, isWatchEntry,
   isVideoCompleted, getCompletedAt
 } from '../models/video-note.model';
+import { getExerciseProgress, getExercisePointCount, VideoExercise } from '../models/video-exercise.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../header/header.component';
@@ -58,6 +59,8 @@ export class VideoHistoryComponent implements OnInit {
   isCompleted: boolean = false;
   /** When the video was marked fully watched, if it was. */
   completedAt: Date | null = null;
+  /** Practical exercises of this video, shared by all of its entries. */
+  exercises: VideoExercise | null = null;
 
   // "Add time" dialog state
   showAddDialog: boolean = false;
@@ -171,6 +174,26 @@ export class VideoHistoryComponent implements OnInit {
     this.latestVideo = entries.length > 0
       ? entries[entries.length - 1].video
       : null;
+
+    this.exercises = this.latestVideo
+      ? this.storage.getVideoExercises(this.latestVideo.id)
+      : null;
+  }
+
+  /** Number of exercise points written for this video. */
+  get exercisePointCount(): number {
+    return getExercisePointCount(this.exercises);
+  }
+
+  /** Progress of the exercises, in percent (100 when all are completed). */
+  get exerciseProgress(): number {
+    return getExerciseProgress(this.exercises);
+  }
+
+  /** Opens the exercise details page of this video. */
+  openExercises(): void {
+    if (!this.latestVideo) return;
+    this.router.navigate(['/exercises', this.latestVideo.id]);
   }
 
   // Real YouTube thumbnail when the video has a YouTube URL, else the

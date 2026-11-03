@@ -1,0 +1,230 @@
+<div class="page-container">
+  <app-header
+    [actionLabel]="'New point'"
+    [actionIcon]="'add'"
+    [onAction]="addRootAction"></app-header>
+
+  <div class="folder-shell" (click)="onDocumentClick($event)" (dragover)="onBodyDragOver($event)" (drop)="onBodyDrop($event)">
+    <div class="breadcrumb-bar">
+      <div class="breadcrumb">
+        <div class="breadcrumb-item"><span class="breadcrumb-link" (click)="goProjects()">Projects</span></div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item"><span class="breadcrumb-link" (click)="goProject()">{{ project?.name || 'Project' }}</span></div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item"><span>{{ folder?.name || 'Folder' }}</span></div>
+      </div>
+
+      <div class="folder-tools">
+        <div class="search-box">
+          <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/>
+          </svg>
+          <input
+            type="search"
+            [(ngModel)]="search"
+            (ngModelChange)="onSearchChange()"
+            placeholder="Find a point"
+            aria-label="Find a point"
+          />
+          <button *ngIf="search" class="search-clear" (click)="clearSearch()" aria-label="Clear search">
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+        <button class="tool-btn" (click)="expandAll()" title="Expand all points">Expand all</button>
+        <button class="tool-btn" (click)="collapseAll()" title="Collapse all points">Collapse all</button>
+      </div>
+    </div>
+
+    <ng-container *ngIf="folder; else missingFolder">
+      <div class="folder-heading">
+        <div class="folder-heading-text">
+          <h2 class="folder-title">{{ folder.name }}</h2>
+          <p class="folder-meta">
+            {{ totalPoints }} {{ totalPoints === 1 ? 'point' : 'points' }} &middot;
+            {{ maxDepth }} {{ maxDepth === 1 ? 'level' : 'levels' }} deep
+            <span *ngIf="folder.description"> &middot; {{ folder.description }}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- The document surface: scrolls vertically by page, horizontally when nested deep -->
+      <div class="document-scroll">
+        <div class="document-canvas" [style.min-width.px]="documentWidth">
+          <div class="document-ruler" aria-hidden="true">
+            <span *ngFor="let level of [].constructor(maxDepth); let i = index" [style.left.px]="i * indent + 17"></span>
+          </div>
+
+          <div class="point-list" *ngIf="rows.length > 0; else noPoints">
+            <div
+              class="point-row"
+              *ngFor="let row of rows; let i = index"
+              [class.point-row-hidden]="rowHidden(row)"
+              [class.point-row-dragging]="row.isDragging"
+              [class.drop-before]="row.dropPosition === 'before'"
+              [class.drop-after]="row.dropPosition === 'after'"
+              [class.drop-inside]="row.dropPosition === 'inside'"
+              [class.point-row-match]="isMatch(row)"
+              [style.padding-left.px]="row.depth * indent + 8"
+              [attr.draggable]="!searchActive && draftId !== row.node.id"
+              (dragstart)="onDragStart($event, row.node, row)"
+              (dragover)="onDragOver($event, row)"
+              (drop)="onDrop($event, row)"
+              (dragend)="onDragEnd()"
+              (click)="openDetails(row.node, i)"
+            >
+              <!-- Guides: one connector per nesting level -->
+              <span
+                *ngFor="let guide of row.guides; let level = index"
+                class="guide"
+                [class.guide-line]="guide"
+                [style.left.px]="level * indent + 17"
+                aria-hidden="true"
+              ></span>
+              <span class="guide-elbow" *ngIf="row.depth > 0" [style.left.px]="(row.depth - 1) * indent + 17" aria-hidden="true"></span>
+
+              <span
+                class="drag-handle"
+                title="Drag to move"
+                aria-hidden="true"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                  <path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/>
+                </svg>
+              </span>
+
+              <button
+                class="collapse-toggle"
+                *ngIf="row.hasChildren; else leafDot"
+                (click)="toggleCollapse(row.node, $event)"
+                [attr.aria-label]="collapsedIds.has(row.node.id) ? 'Expand subpoints' : 'Collapse subpoints'"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18" [class.rotated]="!collapsedIds.has(row.node.id)">
+                  <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor"/>
+                </svg>
+              </button>
+              <ng-template #leafDot>
+                <span class="leaf-dot" aria-hidden="true"></span>
+              </ng-template>
+
+              <!-- Draft title input -->
+              <input
+                *ngIf="draftId === row.node.id; else titleText"
+                class="point-title-input"
+                type="text"
+                [(ngModel)]="row.node.title"
+                (input)="onDraftTitleInput(row.node)"
+                (keydown)="onDraftKeydown($event, row.node)"
+                [attr.data-node-id]="row.node.id"
+                (keydown.tab)="onRowTitleKeydown($event)"
+                (click)="$event.stopPropagation()"
+                placeholder="Type a point title and press Enter"
+                autocomplete="off"
+              />
+              <ng-template #titleText>
+                <span class="point-title">{{ untitled(row.node) }}</span>
+              </ng-template>
+
+              <span class="point-badges">
+                <span class="badge" *ngIf="row.childCount > 0" [title]="'Has subpoints'">{{ childLabel(row) }}</span>
+                <span class="badge badge-doc" *ngIf="hasContent(row.node) && row.childCount === 0" title="Has details">Details</span>
+              </span>
+
+              <span class="point-actions" (click)="$event.stopPropagation()">
+                <button class="point-action" (click)="addChild(row.node)" title="Add subpoint" aria-label="Add subpoint">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="point-action" (click)="addSiblingBelow(row.node)" title="Add point below" aria-label="Add point below">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                    <path d="M4 10h12v2H4zM4 6h12v2H4zm0 8h8v2H4zm14-4l-4 4h8z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="point-action" (click)="indentPoint(row.node)" title="Nest under previous point" aria-label="Nest under previous point">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                    <path d="M3 21h18v-2H3v2zM3 3v8h8V3H3zm14 4h4V5h-4v2zm0 4h4V9h-4v2zm0 4h4v-2h-4v2zm0 4h4v-2h-4v2z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="point-action" (click)="outdentPoint(row.node)" [disabled]="!canOutdent(row.node)" title="Move out one level" aria-label="Move out one level">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                    <path d="M3 21h18v-2H3v2zM3 8v8l4-4-4-4zm9 9h9v-2h-9v2zm0-4h9v-2h-9v2zm0-4h9V7h-9v2z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="point-action" (click)="movePoint(row.node, -1)" [disabled]="!canMoveUp(row.node)" title="Move up" aria-label="Move up">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                    <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="point-action" (click)="movePoint(row.node, 1)" [disabled]="!canMoveDown(row.node)" title="Move down" aria-label="Move down">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                    <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="point-action" (click)="renamePoint(row.node, $event)" title="Rename point" aria-label="Rename point">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <button class="point-action point-action-danger" (click)="deleteNode(row.node, $event)" title="Delete point" aria-label="Delete point">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </span>
+            </div>
+          </div>
+
+          <ng-template #noPoints>
+            <div class="empty-state">
+              <h3 *ngIf="!searchActive">This folder is empty</h3>
+              <h3 *ngIf="searchActive">No points match "{{ search }}"</h3>
+              <p *ngIf="!searchActive">
+                Start with your first point (for example an API or a requirement). Every point can have its own subpoints.
+              </p>
+              <p *ngIf="searchActive">Try another word, or clear the search.</p>
+              <button class="google-btn" *ngIf="!searchActive" (click)="addRootPoint()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+                </svg>
+                Add first point
+              </button>
+              <button class="google-btn google-btn-secondary" *ngIf="searchActive" (click)="clearSearch()">Clear search</button>
+            </div>
+          </ng-template>
+
+          <button class="add-point-row" *ngIf="!searchActive" (click)="addRootPoint()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" width="18">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+            </svg>
+            Add point
+          </button>
+
+          <p class="hint-line">
+            Click a point to write details &middot; drag to rearrange &middot; Tab nests, Shift+Tab moves out
+          </p>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #missingFolder>
+      <div class="empty-state">
+        <h3>Folder not found</h3>
+        <p>It may have been deleted, or the link is wrong.</p>
+        <button class="google-btn" (click)="goProjects()">Back to projects</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<app-node-modal
+  *ngIf="activeNode"
+  [node]="activeNode"
+  [pathLabel]="activePathLabel"
+  [childCount]="activeChildCount"
+  (saved)="onModalSaved($event)"
+  (deleted)="onModalDeleted($event)"
+  (addChild)="onModalAddChild($event)"
+  (close)="closeModal()"
+></app-node-modal>

@@ -72,11 +72,39 @@ export class FileStorageService {
     }
   }
 
+  /** Lists the file names inside a subfolder of the storage folder ([] when unknown). */
+  async listFiles(subFolder: string): Promise<string[]> {
+    if (!this.dirHandle) return [];
+    try {
+      const folder = await this.dirHandle.getDirectoryHandle(subFolder, { create: true });
+      const names: string[] = [];
+      for await (const [name, handle] of (folder as any).entries()) {
+        if (handle.kind === 'file') names.push(name);
+      }
+      return names;
+    } catch {
+      return [];
+    }
+  }
+
+  /** Deletes a file from a subfolder of the storage folder; false when missing. */
+  async removeFile(subFolder: string, fileName: string): Promise<boolean> {
+    if (!this.dirHandle) return false;
+    if (await this.queryPermission() !== 'granted') return false;
+    try {
+      const folder = await this.dirHandle.getDirectoryHandle(subFolder, { create: true });
+      await folder.removeEntry(fileName);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   /** Reads a JSON file from the storage folder; null if it does not exist. */
   async readFileAs<T>(fileName: string): Promise<T | null> {
     if (!this.dirHandle) return null;
     try {
-      const fileHandle = await this.dirHandle.getFileHandle(fileName);
+      const fileHandle = await this.getFileHandle(fileName, false);
       const file = await fileHandle.getFile();
       return JSON.parse(await file.text()) as T;
     } catch {
@@ -99,7 +127,7 @@ export class FileStorageService {
     if (!this.dirHandle) return false;
     if (await this.queryPermission() !== 'granted') return false;
     try {
-      const fileHandle = await this.dirHandle.getFileHandle(fileName, { create: true });
+      const fileHandle = await this.getFileHandle(fileName, true);
       const writable = await fileHandle.createWritable();
       await writable.write(JSON.stringify(value, null, 2));
       await writable.close();
@@ -108,6 +136,17 @@ export class FileStorageService {
       console.error('Failed to write file:', fileName, err);
       return false;
     }
+  }
+
+  /** Resolves a relative path such as "projects/abc.json" to a root file handle. */
+  private async getFileHandle(relativePath: string, create: boolean): Promise<any> {
+    const parts = relativePath.split('/').filter(Boolean);
+    const fileName = parts.pop()!;
+    let dir = this.dirHandle;
+    for (const part of parts) {
+      dir = await dir.getDirectoryHandle(part, { create });
+    }
+    return dir.getFileHandle(fileName, { create });
   }
 
   private async queryPermission(): Promise<PermissionState> {

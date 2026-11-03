@@ -1,0 +1,217 @@
+@use '../../shared/google-theme' as *;
+
+.project-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 0 24px;
+}
+
+.project-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  margin: 16px 0 24px;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-md);
+  background-color: $google-white;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+
+  .google-btn {
+    margin-left: auto;
+    align-self: center;
+  }
+}
+
+.hero-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.hero-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+.project-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+  color: $google-text;
+  overflow-wrap: anywhere;
+}
+
+.hero-edit {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $google-text-secondary;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: $google-hover;
+    color: $google-blue;
+  }
+}
+
+.project-summary {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: $google-text-secondary;
+}
+
+.project-description {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: $google-text-secondary;
+}
+
+.folder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.folder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid $google-border;
+  border-radius: var(--radius-md);
+  background-color: $google-white;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: box-shadow var(--speed) var(--ease), transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
+
+  &:hover {
+    border-color: color-mix(in srgb, $google-blue 35%, transparent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $google-blue;
+    outline-offset: 2px;
+  }
+}
+
+.folder-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.folder-icon {
+  display: flex;
+  padding: 6px;
+  border-radius: 10px;
+  background-color: $google-grey;
+}
+
+.folder-actions {
+  display: flex;
+  gap: 1px;
+  opacity: 0;
+  transition: opacity var(--speed) var(--ease);
+
+  .folder-card:hover &,
+  .folder-card:focus-within & {
+    opacity: 1;
+  }
+}
+
+.card-icon-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $google-text-secondary;
+
+  &:hover {
+    background-color: $google-hover;
+    color: $google-text;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+    background: none;
+  }
+
+  &.card-icon-danger:hover {
+    color: $google-red;
+  }
+}
+
+.folder-name {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: $google-text;
+  overflow-wrap: anywhere;
+}
+
+.folder-description {
+  margin: 0;
+  font-size: 13px;
+  color: $google-text-secondary;
+}
+
+.folder-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, $google-border 70%, transparent);
+  font-size: 12px;
+  color: $google-text-secondary;
+}
+
+.folder-points {
+  font-weight: 500;
+  color: $google-text-secondary;
+}
+
+.empty-state {
+  padding: 64px 24px;
+  border: 1px dashed $google-border;
+  border-radius: var(--radius-md);
+  background-color: $google-white;
+  text-align: center;
+
+  h3 {
+    margin: 0 0 8px;
+    color: $google-text;
+  }
+
+  p {
+    margin: 0 auto 20px;
+    max-width: 460px;
+    color: $google-text-secondary;
+  }
+}
+
+.dialog-field {
+  display: block;
+  margin-top: 16px;
+}

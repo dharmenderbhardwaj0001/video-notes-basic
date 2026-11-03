@@ -1,0 +1,107 @@
+{
+  "id": "mvw03yn2-kkxmtw",
+  "name": "testing",
+  "description": "",
+  "color": "#e8710a",
+  "createdAt": "2026-10-31T06:09:25.022Z",
+  "updatedAt": "2026-10-31T06:12:20.167Z",
+  "folders": [
+    {
+      "id": "mvw045ty-hqk4hr",
+      "name": "testing 1",
+      "description": "",
+      "createdAt": "2026-10-31T06:09:34.342Z",
+      "updatedAt": "2026-10-31T06:12:20.167Z",
+      "nodes": [
+        {
+          "id": "mvw049jx-z57xg8",
+          "title": "Untitled point",
+          "isDraft": false,
+          "collapsed": false,
+          "children": [],
+          "document": {
+            "description": "",
+            "notes": "",
+            "links": [],
+            "images": [],
+            "updatedAt": ""
+          }
+        },
+        {
+          "id": "mvw04b1f-2osjv1",
+          "title": "Auth API",
+          "isDraft": false,
+          "collapsed": false,
+          "children": [
+            {
+              "id": "mvw04f2x-92pgvv",
+              "title": "Untitled point",
+              "isDraft": false,
+              "collapsed": false,
+              "children": [
+                {
+                  "id": "mvw04kxv-ehrl5o",
+                  "title": "",
+                  "isDraft": true,
+                  "collapsed": false,
+                  "children": [],
+                  "document": {
+                    "description": "",
+                    "notes": "",
+                    "links": [],
+                    "images": [],
+                    "updatedAt": ""
+                  }
+                }
+              ],
+              "document": {
+                "description": "",
+                "notes": "",
+                "links": [],
+                "images": [],
+                "updatedAt": ""
+              }
+            },
+            {
+              "id": "mvw04g9j-s4ftjz",
+              "title": "Untitled point",
+              "isDraft": false,
+              "collapsed": false,
+              "children": [],
+              "document": {
+                "description": "",
+                "notes": "",
+                "links": [],
+                "images": [],
+                "updatedAt": ""
+              }
+            }
+          ],
+          "document": {
+            "description": "Authentication endpoints for the payments platform",
+            "notes": "POST /v1/auth/login returns a bearer token",
+            "links": [
+                        {"label":"Auth docs","url":"https://example.com/auth-api"}
+                      ],
+            "images": [],
+            "updatedAt": "2026-10-31T06:11:20.900Z"
+          }
+        },
+        {
+          "id": "mvw06hqr-0oityp",
+          "title": "Token refresh",
+          "isDraft": false,
+          "collapsed": false,
+          "children": [],
+          "document": {
+            "description": "",
+            "notes": "",
+            "links": [],
+            "images": [],
+            "updatedAt": ""
+          }
+        }
+      ]
+    }
+  ]
+}

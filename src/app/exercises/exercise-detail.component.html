@@ -1,0 +1,157 @@
+<div class="page-container">
+  <app-header *ngIf="!isEditing" iconActionLabel="Edit exercises" iconActionIcon="save" [onIconAction]="editAction"></app-header>
+  <app-header *ngIf="isEditing"></app-header>
+
+  <div class="page-content">
+    <div class="exercise-detail-container">
+      <div class="breadcrumb">
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goHome()">Home</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" (click)="goToExercises()">Exercises</span>
+        </div>
+        <span class="breadcrumb-separator">/</span>
+        <div class="breadcrumb-item">
+          <span>Exercise details</span>
+        </div>
+      </div>
+
+      <!-- Not found -->
+      <div class="empty-state" *ngIf="!video">
+        <h3>Video not found</h3>
+        <p>No saved video matches this link.</p>
+        <button class="google-btn" (click)="goToExercises()">Back to exercises</button>
+      </div>
+
+      <ng-container *ngIf="video">
+        <!-- Video summary -->
+        <div class="exercise-header" [class.is-completed]="isFullyCompleted">
+          <div class="exercise-thumb-wrap">
+            <img class="exercise-thumb" [src]="getThumbnail()" [alt]="video.videoTitle || 'Video thumbnail'" />
+            <span class="completed-overlay" *ngIf="isFullyCompleted" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 0 24 24" width="28">
+                <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+              </svg>
+            </span>
+          </div>
+          <div class="exercise-info">
+            <h2 class="page-title">{{ video.videoTitle || 'Untitled Video' }}</h2>
+            <p class="exercise-url" *ngIf="video.videoUrl && !isEditing">{{ video.videoUrl }}</p>
+            <div class="exercise-tags">
+              <span class="exercise-category" *ngIf="video.category">{{ video.category }}</span>
+              <span class="progress-badge" [class.is-complete]="isFullyCompleted">
+                {{ progress }}% completed
+              </span>
+              <span class="exercise-count" *ngIf="points.length > 0">
+                {{ completedCount }} of {{ points.length }} point{{ points.length === 1 ? '' : 's' }} done
+              </span>
+            </div>
+            <span class="progress-track" *ngIf="!isEditing">
+              <span class="progress-fill" [class.is-complete]="isFullyCompleted" [style.width.%]="progress"></span>
+            </span>
+          </div>
+          <div class="exercise-actions" *ngIf="!isEditing">
+            <button class="google-btn google-btn-secondary" (click)="openVideoHistory()">
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" fill="currentColor"/>
+              </svg>
+              Watch History
+            </button>
+            <button class="google-btn" (click)="startEditing()">
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+              </svg>
+              {{ points.length > 0 ? 'Edit Exercises' : 'Add Exercises' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Completed banner -->
+        <div class="completed-banner" *ngIf="isFullyCompleted && !isEditing">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+            <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+          </svg>
+          <span>All exercises completed — <strong>100%</strong> done!</span>
+        </div>
+
+        <!-- Exercise editor -->
+        <div class="exercise-editor" *ngIf="isEditing">
+          <div class="editor-heading">
+            <h3>Write your exercises</h3>
+            <p>Add up to {{ maxPoints }} points. Leave a point empty to skip it.</p>
+          </div>
+
+          <form (ngSubmit)="saveExercises()">
+            <div class="editor-points">
+              <div class="editor-point" *ngFor="let point of draftPoints; let i = index">
+                <span class="point-number">{{ i + 1 }}</span>
+                <textarea
+                  class="google-input editor-input"
+                  [(ngModel)]="point.text"
+                  [name]="'point' + point.number"
+                  rows="1"
+                  [placeholder]="'Exercise point ' + (i + 1)"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <span class="editor-hint">{{ draftCount }} point{{ draftCount === 1 ? '' : 's' }} will be saved</span>
+              <div class="editor-buttons">
+                <button type="button" class="google-btn google-btn-secondary" (click)="cancelEditing()">Cancel</button>
+                <button type="submit" class="google-btn" [disabled]="draftCount === 0">Save Exercises</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Written points -->
+        <ng-container *ngIf="!isEditing">
+          <div class="points-heading" *ngIf="points.length > 0">
+            <h3>Exercise points</h3>
+            <button class="google-btn google-btn-secondary" (click)="toggleAll()">
+              {{ isFullyCompleted ? 'Clear all marks' : 'Mark all completed' }}
+            </button>
+          </div>
+
+          <div class="points-list" *ngIf="points.length > 0">
+            <button
+              type="button"
+              class="point-row"
+              *ngFor="let point of points"
+              [class.is-completed]="point.completed"
+              (click)="togglePoint(point)"
+              [attr.aria-pressed]="point.completed"
+            >
+              <span class="point-check">
+                <svg *ngIf="point.completed" xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
+                  <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+                </svg>
+              </span>
+              <span class="point-text">
+                <span class="point-label">Point {{ point.number }}</span>
+                <span class="point-body">{{ point.text }}</span>
+              </span>
+            </button>
+          </div>
+
+          <div class="empty-state" *ngIf="points.length === 0">
+            <h3>No exercises yet</h3>
+            <p>Write up to {{ maxPoints }} exercise points for this video and mark each one as you complete it.</p>
+            <button class="google-btn" (click)="startEditing()">
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+              </svg>
+              Add Exercises
+            </button>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</div>

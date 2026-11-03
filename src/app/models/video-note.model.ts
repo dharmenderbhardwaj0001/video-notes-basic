@@ -1,3 +1,5 @@
+import { ExercisePoint } from './video-exercise.model';
+
 export interface VideoNote {
   id: string;
   videoTitle: string;
@@ -11,7 +13,14 @@ export interface VideoNote {
   durationWatched?: number; // Duration watched in seconds
   completed?: boolean; // Marked as fully watched
   completedAt?: Date; // When it was marked complete
+  exercises?: VideoExercises; // Practical exercise points of the video
   createdAt: Date;
+  updatedAt: Date;
+}
+
+/** Exercise points stored on a video, as saved on every entry of it. */
+export interface VideoExercises {
+  points: ExercisePoint[];
   updatedAt: Date;
 }
 

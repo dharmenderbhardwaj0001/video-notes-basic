@@ -8,6 +8,17 @@ import {
   WeeklyProgress, MotivationMessage, getProgressMessage, TopVideoNote,
   VideoHistoryEntry, getVideoKey, isSameVideo, getVideoProgress
 } from './models/video-note.model';
+import {
+  ExercisePoint, VideoExercise, getLatestExercises, normalizeExercisePoints, withExercises
+} from './models/video-exercise.model';
+
+/** A video that has exercises, as listed on the exercises page. */
+export interface ExercisedVideo {
+  video: VideoNote;
+  exercises: VideoExercise;
+  /** Latest save of the video, used for ordering. */
+  activityTime: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -148,7 +159,13 @@ export class StorageService {
   private saveAllData(data: YearData[]): void {
     this.memoryData = data;
     this.http.put(this.NOTES_API, data).subscribe({
-      error: () => { this.apiAvailable = false; }
+      error: (err) => {
+        this.apiAvailable = false;
+        // A 409 means the server refused to erase every saved video.
+        if (err?.status === 409) {
+          console.error('Save refused by the local server: this write would erase all saved videos.');
+        }
+      }
     });
     this.fileStorage.writeFile(this.DATA_FILE, data);
   }
@@ -595,6 +612,149 @@ export class StorageService {
 
     this.saveAllData(allData);
     return true;
+  }
+
+  /** The newest exercise record of a video, or null when it has none. */
+  getVideoExercises(videoId: string): VideoExercise | null {
+    const copies: VideoExercise[] = [];
+    let title = '';
+    let url = '';
+    let category: string | undefined;
+
+    for (const yearData of this.getAllData()) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          for (const video of dayData.videos) {
+            if (video.id !== videoId) continue;
+            title = video.videoTitle || title;
+            url = video.videoUrl || url;
+            category = video.category || category;
+            if (video.exercises) copies.push(video.exercises as VideoExercise);
+          }
+        }
+      }
+    }
+
+    const latest = getLatestExercises(copies);
+    if (!latest) {
+      // The video exists but has no exercises yet: report the video identity
+      // so the page can still show the exercise panel.
+      if (!title && !url) return null;
+      const now = new Date();
+      return {
+        videoId,
+        videoTitle: title,
+        videoUrl: url,
+        category,
+        points: [],
+        createdAt: now,
+        updatedAt: now
+      };
+    }
+
+    return {
+      ...latest,
+      videoId,
+      videoTitle: title || latest.videoTitle || '',
+      videoUrl: url || latest.videoUrl || '',
+      category: category ?? latest.category
+    };
+  }
+
+  /**
+   * Saves the exercise list of a video. Exercises belong to the video, so
+   * every saved entry of it is updated: the history page, the exercise list
+   * and the video detail page all show the same progress.
+   */
+  saveVideoExercises(videoId: string, points: ExercisePoint[]): boolean {
+    const allData = this.getAllData();
+    let reference: VideoNote | null = null;
+    for (const yearData of allData) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          const found = dayData.videos.find(video => video.id === videoId);
+          if (found) { reference = found; break; }
+        }
+        if (reference) break;
+      }
+      if (reference) break;
+    }
+    if (!reference) return false;
+
+    const now = new Date();
+    const normalized = normalizeExercisePoints(points);
+    for (const yearData of allData) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          for (const video of dayData.videos) {
+            if (video.id !== videoId && !isSameVideo(video, reference)) continue;
+            video.exercises = {
+              points: normalized.map(point => ({ ...point })),
+              updatedAt: now
+            };
+            video.updatedAt = now;
+          }
+        }
+      }
+    }
+
+    this.saveAllData(allData);
+    return true;
+  }
+
+  /** Marks one exercise point of a video completed (or not). */
+  setExercisePointCompleted(videoId: string, number: number, completed: boolean): boolean {
+    const exercises = this.getVideoExercises(videoId);
+    if (!exercises || exercises.points.length === 0) return false;
+
+    const points = exercises.points.map(point =>
+      point.number === number ? { ...point, completed } : { ...point }
+    );
+    return this.saveVideoExercises(videoId, points);
+  }
+
+  /**
+   * Every video that has exercises, newest activity first, returned as plain
+   * video records so the exercise list page can reuse the video cards.
+   */
+  getVideosWithExercises(): ExercisedVideo[] {
+    const byKey = new Map<string, ExercisedVideo>();
+
+    for (const yearData of this.getAllData()) {
+      for (const monthData of yearData.months) {
+        for (const dayData of monthData.days) {
+          for (const video of dayData.videos) {
+            if (!video.exercises) continue;
+            const key = getVideoKey(video) || video.id;
+            const time = this.getVideoActivityTime(video);
+            const existing = byKey.get(key);
+            if (!existing) {
+              byKey.set(key, {
+                video: withExercises(video, video.exercises as VideoExercise),
+                exercises: video.exercises as VideoExercise,
+                activityTime: time
+              });
+              continue;
+            }
+            if (time > existing.activityTime) {
+              existing.video = withExercises(video, video.exercises as VideoExercise);
+              existing.activityTime = time;
+            }
+            // Keep the newest exercise copy (entries may lag behind).
+            const merged = getLatestExercises([existing.exercises, video.exercises as VideoExercise]);
+            if (merged) existing.exercises = merged;
+          }
+        }
+      }
+    }
+
+    return Array.from(byKey.values())
+      .map(entry => ({
+        video: withExercises(entry.video, entry.exercises),
+        exercises: entry.exercises,
+        activityTime: entry.activityTime
+      }))
+      .sort((a, b) => b.activityTime - a.activityTime);
   }
 
   // Every saved entry of one video on one calendar day. A video can be
