@@ -13,11 +13,17 @@ is needed anymore. The folder-picker in the header is only a
 fallback for when that server is not running.
 
 Backups: every time a file is replaced, the previous version is
-copied into backups/ first (the newest 50 snapshots are kept).
+copied into backups/ first. Only the newest 5 snapshots are kept:
+the server prunes the folder right after each save and again
+every 30 minutes while it is running.
 To recover an older version, copy the snapshot you want over the
 live file, e.g.:
 
     copy backups\video-notes.<timestamp>.json video-notes.json
+
+To clean up old snapshots without running the app, use
+`npm run backups:prune`; `npm run backups:watch` keeps pruning
+every 30 minutes in a separate terminal.
 
 Saving is whole-file, so the server refuses a write that would
 replace saved videos with an empty dataset. If you really mean to

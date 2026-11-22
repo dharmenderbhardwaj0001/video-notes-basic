@@ -63,6 +63,8 @@ Useful commands:
 | --- | --- |
 | `npm start` | Starts the data API (`server.js`) and the Angular dev server together |
 | `npm run api` | Starts only the data API on port 3000 |
+| `npm run backups:prune` | Deletes all but the 5 newest snapshots in `notes/backups/` |
+| `npm run backups:watch` | Runs that cleanup every 30 minutes (leave it in its own terminal) |
 | `npm run serve` | Starts only the Angular dev server (needs the API for saving) |
 | `npm run build` | Builds the app into `dist/` |
 
@@ -77,11 +79,13 @@ notes/
 ├── video-notes.json   # all your video notes (one line per day)
 ├── user.json          # your name
 ├── theme.json         # your selected color theme
+├── backups/           # automatic snapshots (newest 5 kept)
 └── README.txt         # short note about this folder
 ```
 
 - The local API (`server.js`) reads and writes these files automatically as you use the app — no setup or folder picker needed.
 - Every save is written atomically (temp file + rename), so a crash mid-save can't corrupt your data.
+- Before a file is replaced, its previous version is copied into `notes/backups/`. Only the newest 5 snapshots are kept: the server prunes the folder after each save and again every 30 minutes while it runs. You can also prune on demand with `npm run backups:prune`, or keep a 30-minute cleanup running in its own terminal with `npm run backups:watch`.
 - `video-notes.json` is formatted for humans: each day sits on its own line, so you can read or hand-edit it in any editor.
 - The folder-picker button in the header is only a fallback for browsers supporting the File System Access API when the API server isn't running; Chrome may also keep a copy in the folder you pick.
 - These files are personal data and are excluded from git via `.gitignore`.

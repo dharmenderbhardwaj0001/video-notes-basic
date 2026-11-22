@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "node dev.mjs",
     "api": "node server.js",
+    "backups:prune": "node scripts/prune-backups.js",
+    "backups:watch": "node scripts/backup-prune-scheduler.js",
     "serve": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",

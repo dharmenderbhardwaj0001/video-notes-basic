@@ -45,4 +45,6 @@ Thumbs.db
 /notes/video-notes.json
 /notes/user.json
 /notes/theme.json
+# Automatic snapshots written by the server (newest 5 are kept)
+/notes/backups/
 *.tmp

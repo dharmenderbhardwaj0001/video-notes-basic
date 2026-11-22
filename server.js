@@ -132,7 +132,11 @@ function writeFileAtomic(filePath, contents) {
 
 /** Rolling snapshots of the notes dataset, kept next to the data file. */
 const BACKUP_DIR = path.join(DATA_DIR, 'backups');
-const MAX_BACKUPS = 50;
+/** Only the newest few snapshots are kept; older ones are pruned. */
+const MAX_BACKUPS = 5;
+/** How often the backup folder is cleaned while the server is running. */
+const BACKUP_PRUNE_INTERVAL_MS = 30 * 60 * 1000;
+const { pruneBackups } = require('./scripts/prune-backups');
 
 /**
  * Copies the current data file into notes/backups/ before it is replaced.
@@ -151,24 +155,32 @@ function backupFile(filePath) {
     const stamp = new Date().toISOString().replace(/[:.]/g, '-');
     const name = path.basename(filePath, '.json');
     fs.writeFileSync(path.join(BACKUP_DIR, `${name}.${stamp}.json`), contents);
-    pruneBackups(name);
+    pruneBackups({ backupDir: BACKUP_DIR, keep: MAX_BACKUPS });
   } catch (err) {
     console.error('[api] could not write backup:', err.message);
   }
 }
 
-/** Keeps the most recent MAX_BACKUPS snapshots for one data file. */
-function pruneBackups(name) {
+/** Deletes all but the newest MAX_BACKUPS snapshots in notes/backups/. */
+function pruneOldBackups() {
   try {
-    const files = fs.readdirSync(BACKUP_DIR)
-      .filter(file => file.startsWith(`${name}.`) && file.endsWith('.json'))
-      .sort();
-    for (const file of files.slice(0, Math.max(0, files.length - MAX_BACKUPS))) {
-      fs.unlinkSync(path.join(BACKUP_DIR, file));
-    }
-  } catch {
+    pruneBackups({ backupDir: BACKUP_DIR, keep: MAX_BACKUPS });
+  } catch (err) {
     // Pruning is best-effort; a leftover snapshot never harms the data.
+    console.error('[api] could not prune backups:', err.message);
   }
+}
+
+/**
+ * Cleans the backup folder every 30 minutes.
+ *
+ * Writes normally prune too, but a rename that fails after a prune (or a
+ * process that was killed mid-write) can leave snapshots behind, so the
+ * folder is also swept on a timer. unref() keeps this from blocking exit.
+ */
+function scheduleBackupPrune() {
+  pruneOldBackups();
+  setInterval(pruneOldBackups, BACKUP_PRUNE_INTERVAL_MS).unref();
 }
 
 /** Number of saved video entries in a parsed notes dataset. */
@@ -401,6 +413,7 @@ async function handleProjects(req, res, url, searchParams) {
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 fs.mkdirSync(PROJECTS_DIR, { recursive: true });
+scheduleBackupPrune();
 
 const server = http.createServer((req, res) => {
   handle(req, res).catch(err => {
